@@ -3,6 +3,8 @@
 #ifndef M2_MATH_INCLUDE
 #define M2_MATH_INCLUDE
 
+  // IWYU pragma: begin_exports
+
   #ifndef PACKAGE_NAME
   #include <M2/config.h>
   #endif
@@ -29,5 +31,7 @@
   #endif
 
   #include <mpfr.h>
+
+  // IWYU pragma: end_exports
 
 #endif
