@@ -2,7 +2,6 @@
 
 #include <math.h>                           // for ceil, log2, pow
 #include <algorithm>                        // for copy
-#include <cstdlib>                          // for exit, size_t
 #include <iostream>                         // for operator<<, basic_ostream
 #include <iterator>                         // for back_insert_iterator
 #include <map>                              // for operator!=, _Rb_tree_ite...

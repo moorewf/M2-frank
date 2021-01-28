@@ -1,18 +1,18 @@
 #ifndef __vector_arithmetic__
 #define __vector_arithmetic__
 
+#include <utility>               // for swap
+
 #include "NCAlgebras/Range.hpp"  // for Range
 #include "newdelete.hpp"         // for VECTOR
-#include "MemoryBlock.hpp"
-#include "ringelem.hpp"
-#include <variant>
+#include "ringelem.hpp"          // for ring_elem
 
-#include "aring-glue.hpp"
-
-#include <tbb/tbb.h>
-
+class MemoryBlock;
 class Ring;
-union ring_elem;
+
+namespace tbb { class null_mutex; }
+namespace tbb { class queuing_mutex; }
+
 using ComponentIndex = int;
 
 class CoeffVector

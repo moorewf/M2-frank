@@ -1,15 +1,14 @@
 #ifndef __vector_arithmetic_2__
 #define __vector_arithmetic_2__
 
-#include "NCAlgebras/Range.hpp"  // for Range
-#include "newdelete.hpp"         // for VECTOR
-#include "ringelem.hpp"
-#include "aring-glue.hpp"
-#include "VectorArithmetic.hpp"
 #include <variant>
 #include <functional>
 
-#include <tbb/tbb.h>
+#include "NCAlgebras/Range.hpp"  // for Range
+#include "VectorArithmetic.hpp"
+#include "aring-glue.hpp"
+#include "newdelete.hpp"         // for VECTOR
+#include "ringelem.hpp"
 
 class Ring;
 union ring_elem;

@@ -11,8 +11,9 @@ INTERFACE2 = interrupted
 INTERFACE = \
 	myalloc \
 	matrix-ncbasis \
-	M2FreeAlgebraQuotient \
 	M2FreeAlgebra \
+	M2FreeAlgebraQuotient \
+	MemoryBlock \
 	VectorArithmetic \
 	NCAlgebras/Word \
 	NCAlgebras/NCReduction \
@@ -209,7 +210,6 @@ COMMANDS = \
 
 NAMES_H = \
 	VectorArithmetic2 \
-	MemoryBlock \
 	NCAlgebras/Range \
 	style \
 	hash \

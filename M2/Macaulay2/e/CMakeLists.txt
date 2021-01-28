@@ -35,7 +35,6 @@ set(HFILES
 
 # these files are include only.
 set(HPPONLYFILES
-  MemoryBlock.hpp
   NCAlgebras/Range.hpp
   VectorArithmetic2.hpp
   newdelete.hpp
@@ -137,6 +136,7 @@ set(SRCLIST
     	VectorArithmetic
 	M2FreeAlgebraQuotient
 	M2FreeAlgebra
+	MemoryBlock
 	NCAlgebras/Word
 	NCAlgebras/NCReduction
 	NCAlgebras/FreeAlgebraQuotient

@@ -2,10 +2,9 @@
 #define __memory_block_hpp__
 
 #include <memtailor/Arena.h>  // for Arena
+#include <stddef.h>           // for size_t
 #include <iostream>           // for operator<<, endl, basic_ostream, cout
 #include <utility>            // for pair
-
-#include <tbb/tbb.h>
 
 class MemoryBlock
 {

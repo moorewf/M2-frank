@@ -1,13 +1,23 @@
 #include "VectorArithmetic.hpp"
+
+#include <assert.h>                // for assert
+#include <algorithm>               // for max
+#include <vector>                  // for vector
+
+#include <tbb/null_mutex.h>        // for null_mutex
+#include <tbb/queuing_mutex.h>     // for queuing_mutex
+
 #include "MemoryBlock.hpp"
-#include "NCAlgebras/Range.hpp"  // for Range
-#include "newdelete.hpp"         // for newarray, newarray_atomic
-#include "ring.hpp"              // for Ring
-#include "ringelem.hpp"          // for ring_elem
-
-#include "aring-glue.hpp"
-
-#include <iostream>
+#include "NCAlgebras/Range.hpp"    // for Range
+#include "aring-gf-flint-big.hpp"  // for ARingGFFlintBig
+#include "aring-gf-flint.hpp"      // for ARingGFFlint
+#include "aring-glue.hpp"          // for ConcreteRing
+#include "aring-qq-gmp.hpp"        // for ARingQQGMP
+#include "aring-zzp-flint.hpp"     // for ARingZZpFlint
+#include "aring.hpp"               // for ring_GFFlintBig, ring_GFFlintZech
+#include "newdelete.hpp"           // for gc_allocator, VECTOR
+#include "ring.hpp"                // for Ring
+#include "ringelem.hpp"            // for ring_elem
 
 template<typename RingType>
 const VectorArithmetic* vectorArithmetic(const RingType& R)
