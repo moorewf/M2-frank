@@ -1,7 +1,10 @@
 // Copyright 2014-2016  Michael E. Stillman
 
-#include "stdinc-m2.hpp"
 #include "util.hpp"
+
+#include <memory>   // for allocator_traits<>::value_type
+
+#include "M2mem.h"  // for getmemarraytype
 
 M2_string string_std_to_M2(const std::string& s)
 {

@@ -1,26 +1,25 @@
 #include "NCAlgebras/NCReduction.hpp"
 
-#include "NCAlgebras/FreeAlgebra.hpp"  // for FreeAlgebra
-#include "NCAlgebras/FreeMonoid.hpp"   // for MonomEq, FreeMonoid
-#include "MemoryBlock.hpp"             // for MemoryBlock
-#include "NCAlgebras/NCGroebner.hpp"   // for tryOutMathicCode
-#include "NCAlgebras/Word.hpp"         // for Word
-#include "myalloc.hpp"                 // for StatsAllocator
-#include "stdinc-m2.hpp"               // for make_unique
-#include "ring.hpp"                    // for Ring
-#include "style.hpp"                   // for EQ, LT, GT
-
-#include <cassert>                     // for assert
 #include <mathic/Geobucket.h>          // for Geobucket, GeoStoreSameSizeBuffer
 #include <mathic/Heap.h>               // for Heap
 #include <mathic/TourTree.h>           // for TourTree
-#include <algorithm>                   // for copy
-#include <iostream>                    // for string, operator<<, endl, basi...
-#include <map>                         // for map, __map_iterator, operator!=
-#include <memory>                      // for unique_ptr
+
+#include <algorithm>                   // for copy, max
+#include <cassert>                     // for assert
+#include <iostream>                    // for operator<<, endl, basic_ostream
+#include <map>                         // for map, _Rb_tree_iterator, operat...
+#include <memory>                      // for unique_ptr, allocator
 #include <queue>                       // for priority_queue
-#include <type_traits>                 // for swap
 #include <vector>                      // for vector
+
+#include "MemoryBlock.hpp"             // for MemoryBlock
+#include "NCAlgebras/FreeAlgebra.hpp"  // for FreeAlgebra
+#include "NCAlgebras/FreeMonoid.hpp"   // for MonomEq, FreeMonoid
+#include "NCAlgebras/NCGroebner.hpp"   // for tryOutMathicCode
+#include "NCAlgebras/Word.hpp"         // for Word
+#include "myalloc.hpp"                 // for StatsAllocator
+#include "ring.hpp"                    // for Ring
+#include "style.hpp"                   // for EQ, LT, GT
 
 #if 0
 Reasoning about using these structures in noncomm reduction.
@@ -116,14 +115,14 @@ std::unique_ptr<mathic::Geobucket<OurQueueConfiguration>> makeQueue()
 {
   OurQueueConfiguration C;
   
-  return make_unique<mathic::Geobucket<OurQueueConfiguration>>(C);
+  return std::make_unique<mathic::Geobucket<OurQueueConfiguration>>(C);
 }
 
 std::unique_ptr<mathic::Geobucket<OurQueueConfiguration1>> makeQueue1()
 {
   OurQueueConfiguration1 C;
   
-  return make_unique<mathic::Geobucket<OurQueueConfiguration1>>(C);
+  return std::make_unique<mathic::Geobucket<OurQueueConfiguration1>>(C);
 }
 
 class TrivialPolynomialHeap : public PolynomialHeap
@@ -1065,21 +1064,21 @@ makePolynomialHeap(HeapType type, const FreeAlgebra& F)
 {
   switch (type) {
     //  case HeapType::HashedGeobucket:
-    //    return make_unique<HashedPolynomialHeap<mathic::Geobucket>>(F);
+    //    return std::make_unique<HashedPolynomialHeap<mathic::Geobucket>>(F);
   case HeapType::Map:
-    return make_unique<MapPolynomialHeap>(F);
+    return std::make_unique<MapPolynomialHeap>(F);
   case HeapType::PriorityQueue:
-    return make_unique<PriorityQueuePolynomialHeap>(F);
+    return std::make_unique<PriorityQueuePolynomialHeap>(F);
   case HeapType::Trivial:
-    return make_unique<TrivialPolynomialHeap>(F);
+    return std::make_unique<TrivialPolynomialHeap>(F);
   case HeapType::NaiveDedupGeobucket:
-    return make_unique<NaiveDedupPolynomialHeap<mathic::Geobucket>>(F);
+    return std::make_unique<NaiveDedupPolynomialHeap<mathic::Geobucket>>(F);
   case HeapType::NaiveGeobucket:
-    return make_unique<NaivePolynomialHeap<mathic::Geobucket>>(F);
+    return std::make_unique<NaivePolynomialHeap<mathic::Geobucket>>(F);
   case HeapType::NaiveTourTree:
-    return make_unique<NaivePolynomialHeap<mathic::TourTree>>(F);
+    return std::make_unique<NaivePolynomialHeap<mathic::TourTree>>(F);
   case HeapType::NaiveHeap:
-    return make_unique<NaivePolynomialHeap<mathic::Heap>>(F);
+    return std::make_unique<NaivePolynomialHeap<mathic::Heap>>(F);
   };
   return nullptr;
 }

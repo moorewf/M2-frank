@@ -1,14 +1,14 @@
 #include "M2FreeAlgebraQuotient.hpp"
 
-#include <iostream>
-#include <memory>
-#include <utility>
-#include <vector>
+#include <iostream>                    // for operator<<, cout, ostream, endl
+#include <memory>                      // for unique_ptr
+#include <utility>                     // for move
+#include <vector>                      // for vector
 
-#include "NCAlgebras/FreeAlgebra.hpp"
-#include "matrix.hpp"
-#include "ring.hpp"
-#include "stdinc-m2.hpp"
+#include "NCAlgebras/FreeAlgebra.hpp"  // for FreeAlgebra
+#include "buffer.hpp"                  // for buffer
+#include "matrix.hpp"                  // for Matrix
+#include "ring.hpp"                    // for Ring, SumCollector (ptr only)
 
 ConstPolyList copyMatrixToVector(const M2FreeAlgebra& F,
                              const Matrix* input)
