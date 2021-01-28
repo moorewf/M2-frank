@@ -1,11 +1,13 @@
 // Copyright 2005-2016  Michael E. Stillman
 
-#if !defined(SAFEC_EXPORTS)
-#include <engine-exports.h>
-#endif
+#include "f4/monhashtable.hpp"
 
-#include "monhashtable.hpp"
-#include <iostream>
+#include <string.h>        // for memset
+
+#include <iostream>        // for operator<<, endl, basic_ostream, ostream
+#include <utility>         // for move
+
+#include "f4/moninfo.hpp"  // for MonomialInfo
 
 #define HASHVALUE(m) (M->hash_value(m))
 #define MONOMIAL_EQUAL(m, n) (M->is_equal(m, n))

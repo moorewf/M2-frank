@@ -3,8 +3,9 @@
 #ifndef _monhashtable_h_
 #define _monhashtable_h_
 
-#include "moninfo.hpp"
-#include "res-moninfo.hpp"
+#include "f4/res-monomial-types.hpp"  // for res_packed_monomial, res_monomi...
+#include "f4/moninfo.hpp"             // for MonomialInfo, monomial_word
+#include "f4/res-moninfo.hpp"         // for ResMonoid
 
 class MonomialsWithComponent
 {

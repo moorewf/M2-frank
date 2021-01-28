@@ -1,7 +1,10 @@
 // Copyright 2016-2017  Michael E. Stillman
 
 // THe following is apparently only for moIsLex, and the like.
-#include "res-moninfo-sparse.hpp"
+#include "f4/res-moninfo-sparse.hpp"
+
+#include "engine-includes.hpp"
+
 #include <cstdio>
 #include <cstdlib>
 

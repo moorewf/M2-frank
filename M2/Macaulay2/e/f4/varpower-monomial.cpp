@@ -1,6 +1,6 @@
 /* Copyright 2006 by Michael E. Stillman */
 
-#include "varpower-monomial.hpp"
+#include "f4/varpower-monomial.hpp"
 
 /* The following are also in ../style.hpp */
 #define LT (-1)

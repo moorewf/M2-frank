@@ -3,11 +3,9 @@
 #ifndef _varpower_monomial_hpp_
 #define _varpower_monomial_hpp_
 
-#include <cstdio>
+#include "engine-includes.hpp"  // for M2_arrayint
 
-#if !defined(SAFEC_EXPORTS)
-#include <engine-exports.h>
-#endif
+#include <cstdio>               // for FILE
 
 // typedef int64_t varpower_word;
 typedef long varpower_word;

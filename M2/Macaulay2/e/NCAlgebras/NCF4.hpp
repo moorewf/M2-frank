@@ -1,6 +1,11 @@
 #ifndef __nc_f4_hpp__
 #define __nc_f4_hpp__
 
+#include <deque>                          // for deque
+#include <iosfwd>                         // for ostream
+#include <utility>                        // for pair
+#include <vector>                         // for vector
+
 #include "NCAlgebras/FreeMonoid.hpp"      // for MonomEq
 #include "MemoryBlock.hpp"                // for MemoryBlock
 #include "NCAlgebras/Range.hpp"           // for Range
@@ -8,22 +13,18 @@
 #include "NCAlgebras/OverlapTable.hpp"    // for OverlapTable
 #include "NCAlgebras/WordTable.hpp"       // for Overlap, WordTable
 #include "NCAlgebras/SuffixTree.hpp"      // for experimental suffix tree code
-//#include "VectorArithmetic.hpp"         // for VectorArithmetic, CoeffVector, etc
-#include "VectorArithmetic2.hpp"          // for VectorArithmetic, CoeffVector, etc
+#include "VectorArithmetic.hpp"           // for VectorArithmetic, CoeffVector, etc
 #include "Polynomial.hpp"                 // for Monom, ConstPolyList, Poly
 #include "newdelete.hpp"                  // for VECTOR, our_new_delete
 
-#include <deque>                       // for deque
-#include <iosfwd>                      // for ostream
-#include <map>                         // for map
-#include <unordered_map>               // for unordered_map
-#include <tuple>                       // for tuple
-#include <utility>                     // for pair
-#include <vector>                      // for vector
-
-#include <tbb/tbb.h>                        // for tbb
+#include "tbb/concurrent_unordered_map.h"  // for concurrent_unordered_map
+#include "tbb/null_mutex.h"                // for null_mutex
+#include "tbb/parallel_do.h"               // for parallel_do_feeder
+#include "tbb/queuing_mutex.h"             // for queuing_mutex
+#include "tbb/tbb_allocator.h"             // for tbb_allocator
 
 class FreeAlgebra;
+class VectorArithmetic2;
 union ring_elem;
 
 // this class contains an NCGB calculation using the F4 algorithm.

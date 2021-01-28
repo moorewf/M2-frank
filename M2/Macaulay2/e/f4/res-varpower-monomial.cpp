@@ -1,6 +1,7 @@
 /* Copyright 2006-2016 by Michael E. Stillman */
 
-#include "res-varpower-monomial.hpp"
+#include "f4/res-varpower-monomial.hpp"
+#include "f4/res-monomial-types.hpp"  // for res_varpower_word, res_const_va...
 
 /* The following are also in ../style.hpp */
 #define LT (-1)

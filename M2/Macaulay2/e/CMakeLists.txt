@@ -73,7 +73,6 @@ set(HPPONLYFILES
   newdelete.hpp
   queue.hpp
   res-a0-pair.hpp
-  ringelem.hpp
   schur-poly-heap.hpp
   smat.hpp
   style.hpp
@@ -249,6 +248,7 @@ set(SRCLIST
   res-a1
   res-a2
   ring
+  ringelem
   ringmap
   sagbi
   schorder
@@ -363,6 +363,8 @@ target_compile_options(M2-engine PRIVATE
   -Wno-deprecated-register # caused by mps/mpc.h:114:37
   -Wno-mismatched-tags # FIXME: caused by scc1
   -Wno-unused-variable # FIXME: caused by schur2.cpp:597:31
+  -Wno-deprecated-copy # caused by Givaro
+  -Wno-macro-redefined -Wno-misleading-indentation # caused by fflas_ffpack
   >
 
   $<$<COMPILE_LANG_AND_ID:CXX,GNU>:
