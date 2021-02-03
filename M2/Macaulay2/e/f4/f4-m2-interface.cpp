@@ -1,7 +1,7 @@
 // Copyright 2005-2021 Michael E. Stillman
 
 #include "f4/f4-m2-interface.hpp"
-#include "f4/gausser.hpp"              // for Gausser
+#include "schreyer-resolution/res-gausser.hpp" // for ResGausser
 #include "f4/moninfo.hpp"              // for monomial_word, MonomialInfo
 #include "f4/ntuple-monomial.hpp"      // for ntuple_word
 #include "freemod.hpp"                 // for FreeModule
@@ -17,7 +17,7 @@
 #include "style.hpp"                   // for INTSIZE
 #include "VectorArithmetic.hpp"
 
-void F4toM2Interface::from_M2_vec(const Gausser *KK,
+void F4toM2Interface::from_M2_vec(const ResGausser *KK,
                                   const VectorArithmetic* VA,
                                   const MonomialInfo *MI,
                                   const FreeModule *F,
@@ -60,7 +60,7 @@ void F4toM2Interface::from_M2_vec(const Gausser *KK,
   deletearray(lexp);
 }
 
-void F4toM2Interface::poly_set_degrees(const Gausser *KK,
+void F4toM2Interface::poly_set_degrees(const ResGausser *KK,
                                        const VectorArithmetic* VA,
                                        const MonomialInfo *MI,
                                        const M2_arrayint wts,
@@ -82,7 +82,7 @@ void F4toM2Interface::poly_set_degrees(const Gausser *KK,
   deg_result = static_cast<int>(deg);
 }
 
-void F4toM2Interface::from_M2_matrix(const Gausser *KK,
+void F4toM2Interface::from_M2_matrix(const ResGausser *KK,
                                      const VectorArithmetic* VA,
                                      const MonomialInfo *MI,
                                      const Matrix *m,
@@ -99,7 +99,7 @@ void F4toM2Interface::from_M2_matrix(const Gausser *KK,
     }
 }
 
-vec F4toM2Interface::to_M2_vec(const Gausser *KK,
+vec F4toM2Interface::to_M2_vec(const ResGausser *KK,
                                const VectorArithmetic* VA,
                                const MonomialInfo *MI,
                                const poly &f,
@@ -161,7 +161,7 @@ vec F4toM2Interface::to_M2_vec(const Gausser *KK,
   return result;
 }
 
-Matrix *F4toM2Interface::to_M2_matrix(const Gausser *KK,
+Matrix *F4toM2Interface::to_M2_matrix(const ResGausser *KK,
                                       const VectorArithmetic* VA,
                                       const MonomialInfo *MI,
                                       gb_array &polys,
@@ -173,7 +173,7 @@ Matrix *F4toM2Interface::to_M2_matrix(const Gausser *KK,
   return result.to_matrix();
 }
 
-MutableMatrix *F4toM2Interface::to_M2_MutableMatrix(const Gausser *KK,
+MutableMatrix *F4toM2Interface::to_M2_MutableMatrix(const ResGausser *KK,
                                                     const VectorArithmetic* VA,
                                                     coefficient_matrix *mat,
                                                     gb_array &gens,
@@ -187,7 +187,7 @@ MutableMatrix *F4toM2Interface::to_M2_MutableMatrix(const Gausser *KK,
     {
       row_elem &row = mat->rows[r];
       ring_elem *rowelems = newarray(ring_elem, row.len);
-      if (row.coeffs == nullptr)
+      if (row.coeffs.isNull())
         {
           if (row.monom == nullptr)
             KK->to_ringelem_array(row.len, gens[row.elem]->f.coeffs, rowelems);

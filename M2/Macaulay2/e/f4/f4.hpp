@@ -71,7 +71,7 @@
 #include "engine-exports.h"         // for M2_arrayint, M2_bool
 #include "f4-types.hpp"             // for gb_array, MonomialLookupTable
 #include "f4/moninfo.hpp"           // for packed_monomial, MonomialInfo
-#include "gausser.hpp"              // for F4CoefficientArray, dense_row
+#include "schreyer-resolution/res-gausser.hpp" // for F4CoefficientVector, dense_row
 #include "interface/computation.h"  // for ComputationStatusCode, StopCondit...
 #include "memblock.hpp"             // for F4MemoryBlock
 #include "monhashtable.hpp"         // for MonomialHashTable
@@ -91,7 +91,7 @@ class VectorArithmetic;
 class F4GB : public our_new_delete
 {
   // Basic required information
-  const Gausser *mGausser;
+  const ResGausser *mGausser;
   const VectorArithmetic* mVectorArithmetic;
   const MonomialInfo *M;
   const FreeModule *F;
@@ -130,7 +130,7 @@ class F4GB : public our_new_delete
   monomial_word *next_monom;  // valid while creating the matrix
 
   // Local data for gaussian elimination
-  dense_row gauss_row;
+  CoefficientVector gauss_row; // needs to be allocated and set to 0 at beginning of gauss_reduce.
 
   // cumulative timing info
   double clock_sort_columns;
@@ -163,7 +163,7 @@ class F4GB : public our_new_delete
   void reorder_columns();
   void reorder_rows();
 
-  F4CoefficientArray get_coeffs_array(row_elem &r);
+  CoefficientVector get_coeffs_array(row_elem &r);
   // If r.coeffs is set, returns that, otherwise returns the coeffs array from
   // the generator or GB element.  The resulting value should not be modified.
 
@@ -186,7 +186,7 @@ class F4GB : public our_new_delete
   void insert_gb_element(row_elem &r);
 
  public:
-  F4GB(const Gausser *KK0,
+  F4GB(const ResGausser *KK0,
        const VectorArithmetic* VA,
        F4Mem *Mem0,
        const MonomialInfo *MI,

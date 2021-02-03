@@ -6,7 +6,7 @@
 #include "ringelem.hpp"      // for vec
 
 class FreeModule;
-class Gausser;
+class ResGausser;
 class VectorArithmetic;
 class Matrix;
 class MonomialInfo;
@@ -15,7 +15,7 @@ class MutableMatrix;
 class F4toM2Interface
 {
  public:
-  static void poly_set_degrees(const Gausser *KK,
+  static void poly_set_degrees(const ResGausser *KK,
                                const VectorArithmetic* VA,
                                const MonomialInfo *MI,
                                const M2_arrayint wts,
@@ -23,33 +23,33 @@ class F4toM2Interface
                                int &deg,
                                int &alpha);
 
-  static void from_M2_vec(const Gausser *KK,
+  static void from_M2_vec(const ResGausser *KK,
                           const VectorArithmetic* VA,
                           const MonomialInfo *MI,
                           const FreeModule *F,
                           vec v,
                           poly &result);
 
-  static vec to_M2_vec(const Gausser *KK,
+  static vec to_M2_vec(const ResGausser *KK,
                        const VectorArithmetic* VA,
                        const MonomialInfo *MI,
                        const poly &f,
                        const FreeModule *F);
 
-  static void from_M2_matrix(const Gausser *KK,
+  static void from_M2_matrix(const ResGausser *KK,
                              const VectorArithmetic* VA,
                              const MonomialInfo *MI,
                              const Matrix *m,
                              M2_arrayint wts,
                              gb_array &result_polys);
 
-  static Matrix *to_M2_matrix(const Gausser *KK,
+  static Matrix *to_M2_matrix(const ResGausser *KK,
                               const VectorArithmetic* VA,
                               const MonomialInfo *MI,
                               gb_array &polys,
                               const FreeModule *F);
 
-  static MutableMatrix *to_M2_MutableMatrix(const Gausser *KK,
+  static MutableMatrix *to_M2_MutableMatrix(const ResGausser *KK,
                                             const VectorArithmetic* VA,
                                             coefficient_matrix *mat,
                                             gb_array &gens,

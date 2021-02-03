@@ -3,6 +3,7 @@
 
 #include "newdelete.hpp"
 #include <stdexcept>
+#include <string>
 
 namespace exc {
 struct engine_error : public std::runtime_error, public our_new_delete

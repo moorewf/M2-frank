@@ -256,6 +256,70 @@ std::ostream& ResGausserZZp::debugDisplayRow(std::ostream& o,
   return o;
 }
 
+CoefficientVector ResGausserZZp::from_ringelem_array(int len, ring_elem *elems) const
+{
+  auto result = new std::vector<FieldElement>(len);
+  for (ComponentIndex i = 0; i < len; i++)
+    {
+      Kp->set_from_long((*result)[i],
+                        static_cast<int>(get_ring()->coerceToLongInteger(elems[i]).second));
+    }
+  return coefficientVector(result);
+}
+
+void ResGausserZZp::to_ringelem_array(int len, CoefficientVector coeffs, ring_elem *result) const
+{
+  auto& elems = coefficientVector(coeffs);
+  for (auto i = 0; i < elems.size(); i++)
+    {
+      result[i] = get_ring()->from_long(coeff_to_int(elems[i]));
+    }
+}
+
+void ResGausserZZp::denseToSparse(CoefficientVector& dense,
+                     CoefficientVector& result_sparse, // output value: sets this value
+                     ComponentIndex*& result_comps,
+                     int first,
+                     int last,
+                     F4Mem * memForComponents) const
+{
+  auto& elems = coefficientVector(dense);
+  int len = 0;
+  for (int i = first; i <= last; i++)
+    if (!Kp->is_zero(elems[i])) len++;
+  auto svec = new std::vector<int>(len);
+  int *in_comps = memForComponents->components.allocate(len);
+  result_comps = in_comps;
+  for (int i = first; i <= last; i++)
+    if (!Kp->is_zero(elems[i]))
+      {
+        (*svec)[i] = elems[i];
+        *in_comps++ = i;
+        Kp->set_zero(elems[i]);
+      }
+
+  result_sparse = coefficientVector(svec);
+}
+  
+void ResGausserZZp::makeMonic(CoefficientVector& sparse) const
+{
+  auto& svec = coefficientVector(sparse);
+
+  FieldElement leadCoeffInv;
+  Kp->init(leadCoeffInv);
+  Kp->invert(leadCoeffInv,svec[0]);
+  
+  for (auto& c : svec) { Kp->mult(c, c, leadCoeffInv); }
+}
+
+CoefficientVector ResGausserZZp::copy(const CoefficientVector& sparse) const
+{
+  auto& svec = coefficientVector(sparse);
+  auto result = new std::vector<int>(svec.size());
+  for (ComponentIndex i = 0; i < svec.size(); i++) Kp->set((*result)[i], svec[i]);
+  return coefficientVector(result);
+}
+
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // indent-tabs-mode: nil

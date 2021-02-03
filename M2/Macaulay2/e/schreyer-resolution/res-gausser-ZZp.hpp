@@ -121,6 +121,23 @@ class ResGausserZZp : public ResGausser
                                         int ncolumns,
                                         const std::vector<int>& comps,
                                         CoefficientVector coeffs) const;
+
+  // The following 5 routines are only used in f4, not in schreyer-resolution.
+  virtual CoefficientVector from_ringelem_array(int len, ring_elem *elems) const;
+
+  virtual void to_ringelem_array(int len, CoefficientVector, ring_elem *result) const;
+
+  virtual void denseToSparse(CoefficientVector& dense,
+                     CoefficientVector& sparse, // output value: sets this value
+                     ComponentIndex*& comps,
+                     int first,
+                     int last,
+                     F4Mem * memForComponents) const;
+  
+  virtual void makeMonic(CoefficientVector& sparse) const;
+
+  virtual CoefficientVector copy(const CoefficientVector& r) const;
+  
 };
 
 #endif

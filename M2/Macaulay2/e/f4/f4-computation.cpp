@@ -8,7 +8,7 @@
 #include "f4/f4-mem.hpp"           // for F4Mem
 #include "f4/f4-types.hpp"         // for gb_array, gbelem
 #include "f4/f4.hpp"               // for F4GB
-#include "f4/gausser.hpp"          // for Gausser
+#include "schreyer-resolution/res-gausser.hpp"          // for ResGausser
 #include "f4/moninfo.hpp"          // for MonomialInfo
 #include "matrix-con.hpp"          // for MatrixConstructor
 #include "matrix.hpp"              // for Matrix
@@ -35,7 +35,7 @@ GBComputation *createF4GB(const Matrix *m,
   const Ring *K = R->getCoefficients();
   F4Mem *Mem = new F4Mem;
   auto vectorArithmetic = new VectorArithmetic(K);
-  Gausser *KK = Gausser::newGausser(K, Mem);
+  ResGausser *KK = ResGausser::newResGausser(K);
   if (KK == nullptr)
     {
       ERROR(
@@ -58,7 +58,7 @@ GBComputation *createF4GB(const Matrix *m,
   return G;
 }
 
-F4Computation::F4Computation(Gausser *K0,
+F4Computation::F4Computation(ResGausser *K0,
                              const VectorArithmetic* VA,
                              F4Mem *Mem0,
                              const Matrix *m,

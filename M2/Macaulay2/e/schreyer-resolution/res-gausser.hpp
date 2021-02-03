@@ -3,9 +3,10 @@
 #ifndef _res__gausser_hpp_
 #define _res__gausser_hpp_
 
+#include "exceptions.hpp"
 #include "newdelete.hpp"  // for our_new_delete
 #include "ringelem.hpp"   // for ring_elem
-
+#include "f4/f4-mem.hpp"     // for F4Mem (temporary use?)
 #include <iosfwd>         // for ostream
 #include <type_traits>    // for swap
 #include <vector>         // for vector
@@ -53,6 +54,7 @@ class ResGausser : public our_new_delete
                                       size_t loc) const = 0;
 
   virtual bool isAllowedCoefficientRing(const Ring* K) const = 0;
+
   virtual ring_elem to_ring_elem(
       const Ring* K,
       const CoefficientVector& coeffs,
@@ -60,6 +62,17 @@ class ResGausser : public our_new_delete
   virtual void from_ring_elem(CoefficientVector& result,
                               ring_elem a,
                               ring_elem b) const = 0;  // appends to result.
+
+
+  // TODO: write, but also change signature.
+  virtual CoefficientVector from_ringelem_array(int len, ring_elem *elems) const {
+    throw exc::engine_error("Unimplemented");
+  }
+
+  // TODO: write, but also change signature. (Use container)
+  virtual void to_ringelem_array(int len, CoefficientVector, ring_elem *result) const {}
+
+  
   virtual long to_modp_long(CoefficientVector& coeffs, size_t loc) const = 0;
 
   virtual size_t size(CoefficientVector r) const = 0;
@@ -104,6 +117,22 @@ class ResGausser : public our_new_delete
   // ASSUMPTION: the lead coeff of 'sparse' is 1 or -1 (in the field)
   // The value of c is not recorded in this version.
 
+  // TODO: change interface.
+  virtual void denseToSparse(CoefficientVector& dense,
+                     CoefficientVector& sparse, // output value: sets this value
+                     ComponentIndex*& comps,
+                     int first,
+                     int last,
+                     F4Mem * memForComponents) const {}
+
+  // TODO
+  virtual void makeMonic(CoefficientVector& sparse) const {}
+
+  // TODO
+  virtual CoefficientVector copy(const CoefficientVector& r) const {
+    throw exc::engine_error("Unimplemented");
+  }
+  
   virtual std::ostream& out(std::ostream& o,
                             CoefficientVector r,
                             int loc) const = 0;

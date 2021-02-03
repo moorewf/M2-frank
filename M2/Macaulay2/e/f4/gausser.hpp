@@ -36,17 +36,17 @@ class Gausser : public our_new_delete
 
   void to_ringelem_array(int len, F4CoefficientArray, ring_elem *result) const;
 
-  F4CoefficientArray copy_F4CoefficientArray(int len,
+  virtual F4CoefficientArray copy_F4CoefficientArray(int len,
                                              F4CoefficientArray F) const;
 
-  // leading coefficient
-  int lead_coeff(F4CoefficientArray coeffs) const
-  {
-    return (static_cast<int *>(coeffs))[0];
-  }
+  // // leading coefficient
+  // int lead_coeff(F4CoefficientArray coeffs) const
+  // {
+  //   return (static_cast<int *>(coeffs))[0];
+  // }
 
   // other routines:
-  void deallocate_F4CCoefficientArray(F4CoefficientArray &F, int len) const;
+  virtual void deallocate_F4CCoefficientArray(F4CoefficientArray &F, int len) const;
 
   // reduce mod p. (QQ --> ZZ/p) (place in double's??)
 
@@ -58,22 +58,22 @@ class Gausser : public our_new_delete
 
   // evaluation of multivariate poly's or fcn's.
 
-  void dense_row_allocate(dense_row &r, int nelems) const;
+  virtual void dense_row_allocate(dense_row &r, int nelems) const;
   // create a row of 0's (over K).
 
-  void dense_row_clear(dense_row &r, int first, int last) const;
+  virtual void dense_row_clear(dense_row &r, int first, int last) const;
 
-  void dense_row_deallocate(dense_row &r) const;
+  virtual void dense_row_deallocate(dense_row &r) const;
 
-  int dense_row_next_nonzero(dense_row &r, int first, int last) const;
+  virtual int dense_row_next_nonzero(dense_row &r, int first, int last) const;
 
-  void dense_row_fill_from_sparse(dense_row &r,
+  virtual void dense_row_fill_from_sparse(dense_row &r,
                                   int len,
                                   F4CoefficientArray sparse,
                                   int *comps) const;
   // Fills 'r' from 'sparse' (and 'comps')
 
-  void dense_row_cancel_sparse(dense_row &r,
+  virtual void dense_row_cancel_sparse(dense_row &r,
                                int len,
                                F4CoefficientArray sparse,
                                int *comps) const;
@@ -81,14 +81,14 @@ class Gausser : public our_new_delete
   // There should also be a version of this routine which records this value c
   // into a F4CoefficientArray.
 
-  void dense_row_to_sparse_row(dense_row &r,
+  virtual void dense_row_to_sparse_row(dense_row &r,
                                int &result_len,
                                F4CoefficientArray &result_sparse,
                                int *&result_comps,
                                int first,
                                int last) const;
 
-  void sparse_row_make_monic(int len, F4CoefficientArray sparse) const;
+  virtual void sparse_row_make_monic(int len, F4CoefficientArray sparse) const;
 
   mutable long n_dense_row_cancel;
   mutable long n_subtract_multiple;

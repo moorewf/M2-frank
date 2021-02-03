@@ -8,14 +8,15 @@
 #include "f4/varpower-monomial.hpp"  // for varpower_monomials, varpower_mon...
 #include "newdelete.hpp"             // for our_new_delete, VECTOR, (gc_allocator)
 #include "style.hpp"                 // for LT
+#include "schreyer-resolution/res-gausser.hpp" // for CoefficientVector
 
-#define sizeofspair(s, len) \
+#define sizeofspair(s, len)                                 \
   (sizeof(*s) - sizeof(s->lcm) + (len) * sizeof(s->lcm[0]))
 
 // Coefficients.  The implementation of arrays of coeffs
 // is done as a private array.  Note that the length is
 // not encoded: keep that length separately.
-typedef void *F4CoefficientArray;
+// typedef void *F4CoefficientArray; // in res-gausser, as CoefficientArray.
 
 enum gbelem_type {
   ELEM_IN_RING,          // These are ring elements
@@ -38,7 +39,7 @@ enum spair_type {
 struct poly : public our_new_delete
 {
   int len;
-  F4CoefficientArray coeffs;
+  CoefficientVector coeffs;
   monomial_word *monoms;  // This is all of the monomials written contiguously
 };
 
@@ -74,7 +75,7 @@ typedef VECTOR(gbelem *) gb_array;
 struct sparse_row : public our_new_delete
 {
   int len;
-  F4CoefficientArray coeffs;
+  CoefficientVector coeffs;
   int *comps;
 };
 
@@ -86,7 +87,7 @@ struct row_elem : public our_new_delete
 
   // The polynomial itself
   int len;
-  F4CoefficientArray coeffs;
+  CoefficientVector coeffs;
   int *comps;
 };
 
