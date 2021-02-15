@@ -512,6 +512,8 @@ class RingQQ : public ConcreteRing<ARingQQ>
     mpz_set(mpq_numref(b), numer);
     mpz_set(mpq_denref(b), denom);
     mpq_canonicalize(b);
+    mpz_reallocate_limbs(mpq_numref(b));
+    mpz_reallocate_limbs(mpq_denref(b));
     return ring_elem(b);
   }
 

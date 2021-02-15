@@ -1203,6 +1203,9 @@ void GBRing::gbvector_combine_lead_terms_ZZ(const FreeModule *F,
     {
       result = 0;
       result_syz = 0;
+      mpz_clear(gab);
+      mpz_clear(u1);
+      mpz_clear(v1);      
       return;
     }
   gbvector_get_lead_exponents(F, f, EXP1);  // Removes the Schreyer part
@@ -1231,6 +1234,10 @@ void GBRing::gbvector_combine_lead_terms_ZZ(const FreeModule *F,
       gbvector *result_syz1 = mult_by_term(Fsyz, gsyz, v, MONOM2, comp);
       gbvector_add_to(Fsyz, result_syz, result_syz1);
     }
+  // u and v are u1 and v1 in disguise and are ring_elems for convenience only
+  mpz_clear(gab);
+  mpz_clear(u1);
+  mpz_clear(v1);      
 }
 
 void GBRing::gbvector_apply(const FreeModule *F,
