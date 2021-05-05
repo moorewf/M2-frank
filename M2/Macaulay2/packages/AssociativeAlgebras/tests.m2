@@ -2218,7 +2218,7 @@ A_4 <--> 2 diml
 --   4. In e/mutable-mat-defs.hpp, need to change elementary row and column operations to use the correct multiplication
 --   X  5. In e/interface/mutable-matrix.{h,cpp}, remove opposite_mult arguments
 --   X  6. In m2/mutablemat.m2, remove 'false's from row/column operation code (e.g. rowMult, columnMult)
---   7. In d/interface.dd, remove opposite:Boolean flags (change lengths, etc)
+--   X  7. In d/interface.dd, remove opposite:Boolean flags (change lengths, etc)
 --   8. In d/engine.dd, update scalar_mult to new function calls to reflect changes in matrix.{cpp,hpp} (line ~175)
 --   X 9. Remove rawMatrixColumnOperation2 and rawMatrixRowOperation2 (they appear not to be used outside some engine tests)
 --
