@@ -105,8 +105,7 @@ M2_bool IM2_MutableMatrix_column_swap(MutableMatrix *M, int i, int j);
 M2_bool IM2_MutableMatrix_row_operation(MutableMatrix *M,
                                         int i,
                                         const RingElement *r,
-                                        int j,
-                                        M2_bool opposite_mult);
+                                        int j);
 /* drg: connected rawMatrixRowChange, OK */
 /* row(i) <- row(i) + r * row(j), returns false if matrix is
    immutable, or rows are out of bounds */
@@ -114,24 +113,21 @@ M2_bool IM2_MutableMatrix_row_operation(MutableMatrix *M,
 M2_bool IM2_MutableMatrix_column_operation(MutableMatrix *M,
                                            int i,
                                            const RingElement *r,
-                                           int j,
-                                           M2_bool opposite_mult);
+                                           int j);
 /* drg: connected rawMatrixColChange, OK*/
 /* column(i) <- column(i) + r * column(j), returns false if matrix is
    immutable, or columns are out of bounds */
 
 M2_bool IM2_MutableMatrix_row_scale(MutableMatrix *M,
                                     const RingElement *r,
-                                    int i,
-                                    M2_bool opposite_mult);
+                                    int i);
 /* drg: connected rawMatrixRowScale, OK*/
 /* row(i) <- r * row(i), returns false if matrix is immutable
    or row is out of bounds */
 
 M2_bool IM2_MutableMatrix_column_scale(MutableMatrix *M,
                                        const RingElement *r,
-                                       int i,
-                                       M2_bool opposite_mult);
+                                       int i);
 /* drg: connected rawMatrixColumnScale, OK */
 /* column(i) <- r * column(i), returns false if matrix is immutable
    or row is out of bounds */
@@ -151,32 +147,6 @@ M2_bool IM2_MutableMatrix_delete_columns(MutableMatrix *M, int i, int j);
 M2_bool IM2_MutableMatrix_delete_rows(MutableMatrix *M, int i, int j);
 /* connected to rawDeleteRows, OK  */
 /* Delete rows i .. j from M */
-
-M2_bool IM2_MutableMatrix_column_2by2(MutableMatrix *M,
-                                      int c1,
-                                      int c2,
-                                      const RingElement *a1,
-                                      const RingElement *a2,
-                                      const RingElement *b1,
-                                      const RingElement *b2,
-                                      M2_bool opposite_mult);
-/* connected to rawMatrixColumnOperation2, OK */
-/* column(c1) <- a1 * column(c1) + a2 * column(c2)
-   column(c2) <- b1 * column(c1) + b2 * column(c2)
-*/
-
-M2_bool IM2_MutableMatrix_row_2by2(MutableMatrix *M,
-                                   int r1,
-                                   int r2,
-                                   const RingElement *a1,
-                                   const RingElement *a2,
-                                   const RingElement *b1,
-                                   const RingElement *b2,
-                                   M2_bool opposite_mult);
-/* connected to rawMatrixRowOperation2, OK */
-/* row(r1) <- a1 * row(r1) + a2 * row(r2)
-   row(r2) <- b1 * row(r1) + b2 * row(r2)
-*/
 
 M2_bool IM2_MutableMatrix_sort_columns(MutableMatrix *M, int lo, int hi);
 /* connected to rawSortColumns2, OK */

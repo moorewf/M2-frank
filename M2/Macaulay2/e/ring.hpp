@@ -87,6 +87,9 @@ class Ring : public MutableEngineObject
                  //    a non-zero non-unit.
                  // If a non unit is found, then _isfield is set to -1.
 
+  bool mOppositeMatrixMult;   // default is true (subject to change)
+                              // if true, the entries of M*N are computed via the opposite multiplication (i.e. n_(k,j)*m_(i,k)) 
+
   ring_elem zeroV;  // Three generally useful values in a ring.
   ring_elem oneV;
   ring_elem minus_oneV;
@@ -94,7 +97,10 @@ class Ring : public MutableEngineObject
   void initialize_ring(long charac,
                        const PolynomialRing *DR = 0,
                        const M2_arrayint heft_vec = 0);
-  Ring() : heft_vector(0) {}
+
+  Ring() : heft_vector(nullptr), mOppositeMatrixMult(true) {}
+  Ring(bool oppMatrixMult) : heft_vector(nullptr), mOppositeMatrixMult(oppMatrixMult) {}
+
  public:
   virtual ~Ring();
 

@@ -248,8 +248,7 @@ M2_bool IM2_MutableMatrix_column_swap(MutableMatrix *M, int i, int j)
 M2_bool IM2_MutableMatrix_row_operation(MutableMatrix *M,
                                         int i,
                                         const RingElement *r,
-                                        int j,
-                                        M2_bool opposite_mult)
+                                        int j)
 /* row(i) <- row(i) + r * row(j) */
 {
   const Ring *R = M->get_ring();
@@ -271,8 +270,7 @@ M2_bool IM2_MutableMatrix_row_operation(MutableMatrix *M,
 M2_bool IM2_MutableMatrix_column_operation(MutableMatrix *M,
                                            int i,
                                            const RingElement *r,
-                                           int j,
-                                           M2_bool opposite_mult)
+                                           int j)
 /* column(i) <- column(i) + r * column(j) */
 {
   const Ring *R = M->get_ring();
@@ -293,8 +291,7 @@ M2_bool IM2_MutableMatrix_column_operation(MutableMatrix *M,
 
 M2_bool IM2_MutableMatrix_row_scale(MutableMatrix *M,
                                     const RingElement *r,
-                                    int i,
-                                    M2_bool opposite_mult)
+                                    int i)
 /* row(i) <- r * row(i) */
 {
   const Ring *R = M->get_ring();
@@ -314,8 +311,7 @@ M2_bool IM2_MutableMatrix_row_scale(MutableMatrix *M,
 
 M2_bool IM2_MutableMatrix_column_scale(MutableMatrix *M,
                                        const RingElement *r,
-                                       int i,
-                                       M2_bool opposite_mult)
+                                       int i)
 /* column(i) <- r * column(i) */
 {
   const Ring *R = M->get_ring();
@@ -355,8 +351,7 @@ M2_bool IM2_MutableMatrix_column_2by2(MutableMatrix *M,
                                       const RingElement *a1,
                                       const RingElement *a2,
                                       const RingElement *b1,
-                                      const RingElement *b2,
-                                      M2_bool opposite_mult)
+                                      const RingElement *b2)
 /* column(c1) <- a1 * column(c1) + a2 * column(c2)
    column(c2) <- b1 * column(c1) + b2 * column(c2)
 */
@@ -382,8 +377,7 @@ M2_bool IM2_MutableMatrix_row_2by2(MutableMatrix *M,
                                    const RingElement *a1,
                                    const RingElement *a2,
                                    const RingElement *b1,
-                                   const RingElement *b2,
-                                   M2_bool opposite_mult)
+                                   const RingElement *b2)
 /* row(r1) <- a1 * row(r1) + a2 * row(r2)
    row(r2) <- b1 * row(r1) + b2 * row(r2)
 */

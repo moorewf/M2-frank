@@ -2209,3 +2209,18 @@ A_1 ** A_3 <--> 4
 C_4 <--> 2
 A_4 <--> 2 diml
 ///
+
+-- Notes on fixing matrix multiplication over noncommutative rings (incl. AssociativeAlgebras, WeylAlgebras, ExteriorAlgebras)
+-- Steps:
+--   1. In e/ring.hpp, add in a flag mOppositeRingMult to indicate which direction matrix multiplication occurs in
+--   2. In e/ring-vecs.cpp, need to change: mult_row, mult_vec_to and mult_vec_matrix
+--   3. In e/matrix.{hpp,cpp}, need to change scalar_mult and mult to have 'sides'.
+--   4. In e/mutable-mat-defs.hpp, need to change elementary row and column operations to use the correct multiplication
+--   X  5. In e/interface/mutable-matrix.{h,cpp}, remove opposite_mult arguments
+--   X  6. In m2/mutablemat.m2, remove 'false's from row/column operation code (e.g. rowMult, columnMult)
+--   7. In d/interface.dd, remove opposite:Boolean flags (change lengths, etc)
+--   8. In d/engine.dd, update scalar_mult to new function calls to reflect changes in matrix.{cpp,hpp} (line ~175)
+--   X 9. Remove rawMatrixColumnOperation2 and rawMatrixRowOperation2 (they appear not to be used outside some engine tests)
+--
+-- In addition:
+--   9. If M is a left/right module, we should disallow acting on the 'wrong' side.  Acting on a free module should still be allowed.

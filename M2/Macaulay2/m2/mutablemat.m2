@@ -125,28 +125,28 @@ rowMult = method()
 rowMult(MutableMatrix,ZZ,RingElement) := 
 rowMult(MutableMatrix,ZZ,Number) := (A,r,f) -> (
      f = promote(f,ring A);
-     rawMatrixRowScale(raw A,raw f,r,false);
+     rawMatrixRowScale(raw A,raw f,r);
      A)
 
 columnMult = method()
 columnMult(MutableMatrix,ZZ,Number) :=
 columnMult(MutableMatrix,ZZ,RingElement) := (A,r,f) -> (
      f = promote(f,ring A);
-     rawMatrixColumnScale(raw A,raw f,r,false);
+     rawMatrixColumnScale(raw A,raw f,r);
      A)
 
 rowAdd = method()
 rowAdd(MutableMatrix,ZZ,Number,ZZ) :=
 rowAdd(MutableMatrix,ZZ,RingElement,ZZ) := (A,r,f,i) -> (
      f = promote(f,ring A);
-     rawMatrixRowChange(raw A,r,raw f,i,false);
+     rawMatrixRowChange(raw A,r,raw f,i);
      A)
 
 columnAdd = method()
 columnAdd(MutableMatrix,ZZ,Number,ZZ) :=
 columnAdd(MutableMatrix,ZZ,RingElement,ZZ) := (A,r,f,i) -> (
      f = promote(f,ring A);
-     rawMatrixColumnChange(raw A,r,raw f,i,false);
+     rawMatrixColumnChange(raw A,r,raw f,i);
      A)
 
 fillMatrix = method( Options => { 
