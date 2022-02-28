@@ -41,7 +41,6 @@
 #include "ringelem.hpp"
 #include "aring-glue.hpp"
 #include <variant>
-#include <type_traits>
 #include "f4/f4-mem.hpp"         // for F4Vec
 #include "ARingElem.hpp"
 
@@ -502,7 +501,7 @@ public:
         break;
       default:
         // dummy ring type for default
-	// throw an error here...
+        // throw an error here...
         std::cerr << "*** error! *** ring ID not found....!" << std::endl;
         mConcreteVector = new ConcreteVectorArithmetic<M2::DummyRing>();
       }
