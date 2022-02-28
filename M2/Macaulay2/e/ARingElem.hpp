@@ -22,7 +22,7 @@ public:
   {
     mRing->clear(mElement);
   }
-  const ARing& ring() const
+  const RT& ring() const
   {
     return *mRing;
   }
