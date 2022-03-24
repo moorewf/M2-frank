@@ -51,6 +51,7 @@ using ComponentIndex = int;
 class ElementArray
 {
   // disallow copy...
+  // can't remove these until we stop compiling the gausser files
   friend class ResGausser;
   friend class ResGausserZZp;
   friend class ResGausserQQ;
@@ -253,6 +254,8 @@ public:
   }
 
   //void sparseCancel(ElementArray& dense,
+  // find a way to remove these next two functions.
+  // the issue seems to be the caller doesn't know the size, perhaps?
   void denseCancelFromSparse(ElementArray& dense,
                              const ElementArray& sparse,
                              int* comps,
