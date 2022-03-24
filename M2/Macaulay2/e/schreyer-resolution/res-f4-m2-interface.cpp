@@ -575,7 +575,7 @@ public:
       }
   }
 
-  const Ring* ring() const { return mSchreyerFrame.vectorArithmetic().get_ring(); }
+  const Ring* ring() const { return mSchreyerFrame.vectorArithmetic().ring(); }
 
   int numRows() const { return mNumRows; }
 
@@ -777,7 +777,7 @@ template<typename Gen>
 int SchreyerFrame::rankUsingDenseMatrix(Gen& D, bool transposed)
 {
   unsigned int charac =
-      static_cast<unsigned int>(vectorArithmetic().get_ring()->characteristic());
+      static_cast<unsigned int>(vectorArithmetic().ring()->characteristic());
   M2::ARingZZpFFPACK R(charac);
   DMat<M2::ARingZZpFFPACK> M(R, 0, 0);
   if (!transposed)
@@ -810,7 +810,7 @@ template<typename Gen>
 int SchreyerFrame::rankUsingDenseMatrixFlint(Gen& D, bool transposed)
 {
   unsigned int charac =
-      static_cast<unsigned int>(vectorArithmetic().get_ring()->characteristic());
+      static_cast<unsigned int>(vectorArithmetic().ring()->characteristic());
   M2::ARingZZpFlint R(charac);
   DMat<M2::ARingZZpFlint> M(R, 0, 0);
   if (!transposed)
