@@ -6,7 +6,6 @@
 #include "interface/computation.h"                        // for StopConditions
 #include "schreyer-resolution/res-f4.hpp"                 // for F4Res
 #include "schreyer-resolution/res-f4-monlookup.hpp"       // for ResF4Monomi...
-//#include "schreyer-resolution/res-gausser.hpp"            // for Coefficient...
 #include "schreyer-resolution/res-varpower-monomial.hpp"  // for res_varpowe...
 #include "style.hpp"                                      // for LT, GT
 #include "timing.hpp"                                     // for timer, seconds
@@ -558,7 +557,6 @@ void SchreyerFrame::insertBasic(int lev, res_packed_monomial monom, int degree)
   long idx = myframe.size();
   myframe.emplace_back(FrameElement(monom, degree));
   auto& myelem = myframe[idx];
-  //myelem.mSyzygy.coeffs = gausser().allocateCoefficientVector();
   myelem.mSyzygy.coeffs = vectorArithmetic().allocateElementArray();
   // The rest of this code simply sets the total monomial for the Schreyer order
   // and should be moved out of here. (MES 3 Feb 2016)

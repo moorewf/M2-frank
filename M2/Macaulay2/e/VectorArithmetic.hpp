@@ -50,13 +50,6 @@ using ComponentIndex = int;
 
 class ElementArray
 {
-  // disallow copy...
-  // can't remove these until we stop compiling the gausser files
-  // friend class ResGausser;
-  // friend class ResGausserZZp;
-  // friend class ResGausserQQ;
-  // friend class ResGausserQQHybrid;
-
   template<typename RingType> friend class ConcreteVectorArithmetic;
 
 public:
@@ -160,21 +153,6 @@ public:
     coeffs.setValue(nullptr);
   }
 
-  //ElementArray allocateCoefficientVector(ComponentIndex nelems) const
-  //{
-  //  return allocateElementArray(nelems);
-  //}
-
-  //ElementArray allocateCoefficientVector() const
-  //{
-  //  return allocateCoefficientVector(0);
-  //}
-  
-  //void deallocate(ElementArray& coeffs) const
-  //{
-  //  deallocateElementArray(coeffs);
-  //}
-  
   ////////////////////////
   /// Linear Algebra /////
   ////////////////////////
@@ -202,15 +180,6 @@ public:
     for (ComponentIndex i = 0; i < len; i++) mRing->set(dvec[comps[i]],svec[i]);
   }
 
-  //void fillFromSparse(ElementArray& dense,
-  //                    size_t len, // length of both sparse and comps.
-  //                    const ElementArray& sparse,
-  //                    const int* comps
-  //                    ) const
-  //{
-  //  fillDenseArray(dense, sparse, Range(comps, comps + len));
-  //}
-  
    void denseCancelFromSparse(ElementArray& dense,
                              const ElementArray& sparse,
                              const Range<const int>& comps) const
@@ -253,26 +222,6 @@ public:
     mults.push_back(b); // this grabs b.
   }
 
-  //void sparseCancel(ElementArray& dense,
-  // find a way to remove these next two functions.
-  // the issue seems to be the caller doesn't know the size, perhaps?
-  //void denseCancelFromSparse(ElementArray& dense,
-  //                           const ElementArray& sparse,
-  //                           int* comps,
-  //                           ElementArray& result_loc) const
-  //{
-  //  auto& svec = * elementArray(sparse);
-  //  denseCancelFromSparse(dense, sparse, Range(comps, comps + svec.size()), result_loc);
-  //}
-
-  //void denseCancelFromSparse(ElementArray dense,
-  //                           const ElementArray sparse,
-  //                           int* comps) const
-  //{
-  //  auto& svec = * elementArray(sparse);
-  //  denseCancelFromSparse(dense, sparse, Range(comps, comps + svec.size()));
-  //}
-  
   int denseNextNonzero(ElementArray& dense,
                        int first,
                        int last) const
@@ -290,13 +239,6 @@ public:
     return last + 1;
   }
 
-  //int nextNonzero(ElementArray& dense,
-  //                int first,
-  //                int last) const
-  //{
-  //  return denseNextNonzero(dense, first, last);
-  //}
-  
   void denseToSparse(ElementArray& dense,
                      ElementArray& sparse, // output value: sets this value
                      Range<int>& comps, // output value: sets comps
@@ -700,10 +642,6 @@ public:
     return std::visit([&](auto& arg) -> const Ring* { return arg->ring(); }, mConcreteVector);
   }
 
-  //const Ring* get_ring() const {
-  //  return std::visit([&](auto& arg) -> const Ring* { return arg->ring(); }, mConcreteVector);
-  //}
-  
   // provide simple visitor interface to underlying std::variant types
   size_t size(const ElementArray& coeffs) const {
     return std::visit([&](auto& arg) -> size_t { return arg->size(coeffs); }, mConcreteVector);
@@ -717,33 +655,18 @@ public:
     return std::visit([&](auto& arg) -> ElementArray { return arg->allocateElementArray(nelems);}, mConcreteVector);
   }
 
-  //ElementArray allocateCoefficientVector(ComponentIndex nelems) const {
-  //  return std::visit([&](auto& arg) -> ElementArray { return arg->allocateCoefficientVector(nelems);}, mConcreteVector);
-  //}
-
   ElementArray allocateElementArray() const {
     return std::visit([&](auto& arg) -> ElementArray { return arg->allocateElementArray();}, mConcreteVector);
   }
 
-  //ElementArray allocateCoefficientVector() const {
-  //  return std::visit([&](auto& arg) -> ElementArray { return arg->allocateCoefficientVector();}, mConcreteVector);
-  //}
-  
   ElementArray copyElementArray(const ElementArray& sparse) const {
     return std::visit([&](auto& arg) -> ElementArray { return arg->copyElementArray(sparse);}, mConcreteVector);
   }
-
-  /// Create a coefficient vector with 0 elements.  Can be increased in size.
-  // ElementArray allocateElementArray() const = 0;
 
   /// Deallocate all the coefficients, and the array itself.
   void deallocateElementArray(ElementArray& coeffs) const {
     std::visit([&](auto& arg) { arg->deallocateElementArray(coeffs); }, mConcreteVector);
   }
-
-  //void deallocate(ElementArray& coeffs) const {
-  //  std::visit([&](auto& arg) { arg->deallocate(coeffs); }, mConcreteVector);
-  //}
 
   ////////////////////////
   /// Linear Algebra /////
@@ -754,14 +677,6 @@ public:
     std::visit([&](auto& arg) { arg->fillDenseArray(dense,coeffs,comps); }, mConcreteVector);
   }
 
-  //void fillFromSparse(ElementArray& dense,
-  //                    size_t len, // length of both sparse and comps.
-  //                    const ElementArray& sparse,
-  //                    const int* comps
-  //                    ) const {
-  //  std::visit([&](auto& arg) { arg->fillFromSparse(dense,len,sparse,comps); }, mConcreteVector);
-  //}
-  
   void denseCancelFromSparse(ElementArray& dense,
                                 const ElementArray& coeffs,
                                 const Range<const int>& comps) const {
@@ -774,35 +689,12 @@ public:
                              ElementArray& result_multipler) const {
     std::visit([&](auto& arg) { arg->denseCancelFromSparse(dense,coeffs,comps,result_multipler); }, mConcreteVector);
   }
-
-  //void sparseCancel(ElementArray& dense,
-  //void denseCancelFromSparse(ElementArray& dense,
-  //                           const ElementArray& sparse,
-  //                           int* comps,
-  //                           ElementArray& result_loc) const {
-    //std::visit([&](auto& arg) { arg->sparseCancel(dense,sparse,comps,result_loc); }, mConcreteVector);
-  //  std::visit([&](auto& arg) { arg->denseCancelFromSparse(dense,sparse,comps,result_loc); }, mConcreteVector);
-  //}
-
-  //void sparseCancel(ElementArray& dense,
-  //void denseCancelFromSparse(ElementArray& dense,
-  //                           const ElementArray& sparse,
-  //                           int* comps) const {
-    //std::visit([&](auto& arg) { arg->sparseCancel(dense,sparse,comps); }, mConcreteVector);
-  //  std::visit([&](auto& arg) { arg->denseCancelFromSparse(dense,sparse,comps); }, mConcreteVector);
-  //}
   
   int denseNextNonzero(ElementArray& dense,
                           int first,
                           int last) const {
     return std::visit([&](auto& arg) -> int { return arg->denseNextNonzero(dense,first,last); }, mConcreteVector);
   }
-
-  //int nextNonzero(ElementArray& dense,
-  //                        int first,
-  //                        int last) const {
-  //  return std::visit([&](auto& arg) -> int { return arg->nextNonzero(dense,first,last); }, mConcreteVector);
-  //}
   
   void denseToSparse(ElementArray& dense,
                            ElementArray& coeffs, // sets coeffs
@@ -863,15 +755,6 @@ public:
     return std::visit([&](auto& arg) -> ring_elem { return arg->ringElemFromElementArray(coeffs,index); }, mConcreteVector);
   }
 
-  // This function will get removed.
-  //ring_elem to_ring_elem(
-  //                       const Ring* K, // unused
-  //                       const ElementArray& coeffs,
-  //                       size_t index) const
-  //{
-  //  return std::visit([&](auto& arg) -> ring_elem { return arg->ringElemFromElementArray(coeffs,index); }, mConcreteVector);
-  //}
-
   /////////////////////////////
   /// (Debugging) Display /////
   /////////////////////////////
@@ -881,20 +764,10 @@ public:
     return std::visit([&](auto& arg) -> std::ostream& { return arg->displayElement(o, v, index); }, mConcreteVector);
   }
 
-  //std::ostream& out(std::ostream& o, const ElementArray& v, int index) const
-  //{
-  //  return std::visit([&](auto& arg) -> std::ostream& { return arg->displayElement(o, v, index); }, mConcreteVector);
-  //}
-  
   std::ostream& displayElementArray(std::ostream& o, const ElementArray& v) const
   {
     return std::visit([&](auto& arg) -> std::ostream& { return arg->displayElementArray(o, v); }, mConcreteVector);
   }
-
-  //std::ostream& debugDisplay(std::ostream& o, const ElementArray& v) const
-  //{
-  //  return std::visit([&](auto& arg) -> std::ostream& { return arg->displayElementArray(o, v); }, mConcreteVector);
-  //}
   
   std::ostream& displayAsDenseArray(std::ostream& o,
                                     size_t len,
@@ -905,15 +778,6 @@ public:
     return std::visit([&](auto& arg) -> std::ostream& { return arg->displayAsDenseArray(o, len, v, comps); }, mConcreteVector);
   }
 
-  //std::ostream& debugDisplayRow(std::ostream& o,
-  //                              size_t len,
-  //                              const std::vector<int>& comps,
-  //                              const ElementArray& v
-  //                              ) const
-  //{
-  //  return std::visit([&](auto& arg) -> std::ostream& { return arg->displayAsDenseArray(o, len, v, Range(comps.data(), comps.data() + comps.size())); }, mConcreteVector);
-  //}
-  
   long getNumAdditions() const
   {
     return std::visit([&](auto& arg) -> long { return arg->mStats.numAdditions(); }, mConcreteVector);
