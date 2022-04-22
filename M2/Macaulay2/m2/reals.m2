@@ -267,11 +267,11 @@ CatalanConstant = new Constant from { symbol CatalanConstant, mpfrConstantCatala
 ii = new Constant from { symbol ii, ConstantII}
 
 lngamma = method()
-lngamma ZZ := lngamma QQ := lngamma RR := x -> (
+lngamma RR := x -> (
      (y,s) := lgamma x;
      if s == -1 then y + ii * numeric_(precision y) pi else y
      )
-lngamma Constant := lngamma @@ numeric
+lngamma ZZ := lngamma QQ := lngamma Constant := lngamma @@ numeric
 
 expression Constant := hold
 toString Constant := net Constant := c -> toString c#0
@@ -434,6 +434,14 @@ InexactNumber#{Standard,AfterPrint} = x -> (
 isReal = method()
 isReal RRi := isReal RR := isReal QQ := isReal ZZ := x -> true
 isReal CC := z -> imaginaryPart z == 0
+isReal Constant := isReal @@ numeric
+isReal InfiniteNumber := x -> false
+
+isInfinite' = isInfinite
+isInfinite = method()
+isInfinite Number := isInfinite'
+isInfinite Constant := isInfinite @@ numeric
+isInfinite InfiniteNumber := x -> true
 
 acosh = method()
 acosh Number := z -> log(z+sqrt(z^2-1))

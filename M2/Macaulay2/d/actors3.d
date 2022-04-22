@@ -839,7 +839,13 @@ setupfun("eint",eint).Protected=false;
 Gamma(e:Expr):Expr := (
      when e
      is x:RRcell do toExpr(Gamma(x.v))				    -- # typical value: Gamma, RR, RR
-     else buildErrorPacket("expected a number")
+     is a:Sequence do
+	 if length(a) != 2 then WrongNumArgs(2)
+	 else when a.0 is s:RRcell do
+	     when a.1 is x:RRcell do toExpr(Gamma(s.v, x.v))       -- # typical value: Gamma, RR, RR, RR
+	     else WrongArgRR(2)
+	 else WrongArgRR(1)
+     else buildErrorPacket("expected 1 or 2 numbers")
      );
 setupfun("Gamma",Gamma).Protected=false;
 Digamma(e:Expr):Expr := (

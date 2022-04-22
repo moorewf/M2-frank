@@ -17,7 +17,8 @@ document { Key => {size2, (size2,CC), (size2,RR), (size2,ZZ), (size2,RRi)},
      size2 (1/0.-1/0.)
      ///}
 
-document { Key => {isReal,(isReal,CC),(isReal,QQ),(isReal,RR),(isReal,ZZ),(isReal, RRi)},
+document { Key => {isReal,(isReal,CC),(isReal,QQ),(isReal,RR),(isReal,ZZ),
+	(isReal, RRi), (isReal, Constant), (isReal, InfiniteNumber)},
      Usage => "isReal x",
      Headline => "whether a number is real",
      Inputs => { "x" => Number },
@@ -93,26 +94,6 @@ document { Key => {eint,(eint, RR)},
      ///,
      PARA {"See ", wikipedia "Exponential integral", "."}
      }
-document { Key => {Gamma,(Gamma, RR)},
-     Usage => "Gamma x",
-     Headline => "Gamma function",
-     Inputs => { "x" },
-     Outputs => { RR => { "the gamma function of ", TT "x" }},
-     EXAMPLE lines ///
-     	  Gamma 6
-     ///,
-     PARA {"See ", wikipedia "Gamma function", "."}
-     }
-document { Key => {Beta,(Beta, RR, RR)},
-     Usage => "Beta (x,y)",
-     Headline => "Beta function",
-     Inputs => { "x" },
-     Outputs => { RR => { "the beta function of ", TT "x", " and ", TT "y" }},
-     EXAMPLE lines ///
-	  Beta (3,4)
-     ///,
-     PARA {"See ", wikipedia "Beta function", "."}
-     }
 document { Key => {Digamma,(Digamma, RR)},
      Usage => "Digamma x",
      Headline => "Digamma function",
@@ -124,18 +105,6 @@ document { Key => {Digamma,(Digamma, RR)},
      PARA {"See ", wikipedia "Digamma function", "."},
      SeeAlso => {Gamma}
      }
-document { Key => {lngamma,(lngamma, RR)},
-     Usage => "lngamma x",
-     Headline => "logarithm of the Gamma function",
-     Inputs => { "x" },
-     Outputs => {{ "the logarithm of the gamma function of ", TT "x", " as a real or imaginary number" }},
-     EXAMPLE lines ///
-     	  lngamma 2.1
-	  lngamma(-1.1)
-	  lngamma(-2.1)
-	  lngamma (-2.000000000000000000000000000000001p120)
-     ///
-     }
 document { Key => {zeta,(zeta, RR)},
      Usage => "zeta x",
      Headline => "Riemann zeta function",
@@ -145,26 +114,6 @@ document { Key => {zeta,(zeta, RR)},
      	  zeta 2
      ///,
      PARA {"See ", wikipedia "Riemann zeta function", "."}
-     }
-document { Key => {erf,(erf, RR)},
-     Usage => "erf x",
-     Headline => "error function",
-     Inputs => { "x" },
-     Outputs => { RR => { "the error function of ", TT "x" }},
-     EXAMPLE lines ///
-     	  erf 2
-     ///,
-     PARA {"See ", wikipedia "Error function", "."}
-     }
-document { Key => {erfc,(erfc, RR)},
-     Usage => "erfc x",
-     Headline => "complementary error function",
-     Inputs => { "x" },
-     Outputs => { RR => { "the complementary error function of ", TT "x" }},
-     EXAMPLE lines ///
-     	  erfc 2
-     ///,
-     PARA {"See ", wikipedia "Error function", "."}
      }
 document { 
      --- author(s): L. Gold, Dan Grayson
@@ -482,7 +431,8 @@ document { Key => {isANumber, (isANumber,Number)},
      SeeAlso => {isFinite, isInfinite}
      }
 
-document { Key => {isInfinite, (isInfinite,Number)},
+document { Key => {isInfinite, (isInfinite,Number), (isInfinite, Constant),
+	(isInfinite, InfiniteNumber)},
      Usage => "isInfinite x",
      Headline => "whether a number is infinite",
      Inputs => { "x" => Number },

@@ -783,18 +783,30 @@ else if test $SHARED = no -a $TRY_STATIC = yes
      fi
 fi
 
-AC_MSG_CHECKING(whether package bdw-gc is provided)
+## we build gc by default so we can configure it for large memory spaces
+## see issue #2445
+AC_ARG_WITH([system-gc],
+    [AS_HELP_STRING([--with-system-gc],
+        [use system gc instead of building it])],
+    [],
+    [with_system_gc=no])
+
+AS_IF([test "x$with_system_gc" = xyes],
+    [AC_MSG_CHECKING(whether package bdw-gc is provided)
 dnl Note: we don't include -lgccpp below, because linking with that library is what replaces ::new and friends with GC_MALLOC_UNCOLLECTABLE and friends:
-if [ pkg-config --exists bdw-gc ]
-then AC_MSG_RESULT(yes)
-     CPPFLAGS="`pkg-config --cflags-only-I bdw-gc | sed -e 's=^-I/=-isystem /=g' -e 's= -I/= -isystem /=g'` $CPPFLAGS"
-     dnl should probably use `pkg-config --libs bdw-gc` here instead
-     FOUND_gc=yes
-else AC_MSG_RESULT(no)
-     BUILD_gc=yes
-fi
+     if [ pkg-config --exists bdw-gc ]
+     then AC_MSG_RESULT(yes)
+          CPPFLAGS="`pkg-config --cflags-only-I bdw-gc | sed -e 's=^-I/=-isystem /=g' -e 's= -I/= -isystem /=g'` $CPPFLAGS"
+          dnl should probably use `pkg-config --libs bdw-gc` here instead
+          FOUND_gc=yes
+     else AC_MSG_RESULT(no)
+          BUILD_gc=yes
+     fi],
+    [BUILD_gc=yes])
+
 if test $BUILD_gc = yes
 then BUILTLIBS="-lgc -lpthread $BUILTLIBS"
+     BUILD_ALWAYS="$BUILD_ALWAYS gc"
 else if test $SHARED = no -a $TRY_STATIC = yes
      then SEARCH_LIBRARIES(GC_malloc,"/usr/lib/libgc.a" "/usr/local/lib/libgc.a",,
           [AC_MSG_ERROR([libgc.a not found])])
@@ -1364,6 +1376,9 @@ fi
 
 AX_BOOST_REGEX
 LIBS="$LIBS $BOOST_REGEX_LIB"
+
+AC_CHECK_HEADERS([boost/math/special_functions.hpp], [],
+    [AC_MSG_ERROR([Boost Math Toolkit not available])])
 
 AC_SUBST(ULIMIT_T,yes)
 AC_SUBST(ULIMIT_M,yes)
