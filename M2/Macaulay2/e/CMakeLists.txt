@@ -309,6 +309,7 @@ set(SRCLIST
   schreyer-resolution/res-poly-ring
   schreyer-resolution/res-schreyer-frame
   schreyer-resolution/res-varpower-monomial
+  schreyer-resolution/res-dep-graph
   # Boolean Involutive Gröbner Bases
   bibasis/bibasis
   bibasis/allocator
