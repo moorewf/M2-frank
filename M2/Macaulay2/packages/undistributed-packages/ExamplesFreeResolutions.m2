@@ -1016,8 +1016,15 @@ peek M.cache#(ResolutionContext{}).Result.Resolution.RawComputation
 
 restart
 needsPackage "ExamplesFreeResolutions"
-I = CNC 14;
+I = CNC 13;
 R = ring I
-F = res(I, FastNonminimal => true)
+I = ideal I_*;
+elapsedTime F = res(I, FastNonminimal => true)
 betti F
 minimalBetti I
+
+restart
+I = Grassmannian(1, 7, CoefficientRing => ZZ/101);
+R = ring I
+I = ideal I_*;
+elapsedTime F = res(I, FastNonminimal => true)

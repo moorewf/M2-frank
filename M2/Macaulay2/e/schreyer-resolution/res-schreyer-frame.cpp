@@ -61,6 +61,7 @@ SchreyerFrame::SchreyerFrame(const ResPolyRing& R, int max_level)
       mLoSlantedDegree(0),
       mHiSlantedDegree(0),
       mComputer(new F4Res(*this)),
+      mComputerPool(*this,16),   // 16 is max number of F4Res objects in the pool (arbitrary for now)
       mDepGraph(this)
 {
   mFrame.mLevels.resize(max_level + 1);
@@ -248,6 +249,8 @@ void SchreyerFrame::start_computation(StopConditions& stop)
 
   // build the dependency graph
   makeDependencyGraph(mDepGraph,mMaxLength+1,top_slanted_degree - mLoSlantedDegree,false);
+  mDepGraph.print();
+
   mDepGraph.startComputation();
   mDepGraph.waitForCompletion();
 

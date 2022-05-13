@@ -267,6 +267,7 @@ class SchreyerFrame
 
   // These are used during matrix computation
   std::unique_ptr<F4Res> mComputer;  // used to construct (level,degree) part of the resolution
+  ComputerPool mComputerPool;
   // this is a separate class because there could be several of these, running
   // in parallel.
 
