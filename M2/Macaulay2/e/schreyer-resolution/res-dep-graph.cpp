@@ -45,11 +45,11 @@ TBBNodePtr DependencyGraph::createFillAndReduceNode(int lev, int sldeg)
 				  int& status = mFrame->mComputationStatus.entry(sldeg,lev);
 				  if (status != 1) return msg;
 
-				  auto computer = mFrame->mComputerPool.getComputer();
-				  computer->construct(lev,sldeg + lev);
-				  //mFrame->mComputer->construct(lev,sldeg + lev);
 				  std::lock_guard<std::mutex> guard(mMutex);
-
+				  //auto computer = mFrame->mComputerPool.getComputer();
+				  //computer->construct(lev,sldeg + lev);
+				  mFrame->mComputer->construct(lev,sldeg + lev);
+				  
                                   std::cout << "fill matrix node    lev=" << lev << " sldeg="
                                             << sldeg << " sum=" << lev + sldeg << std::endl;
 				  

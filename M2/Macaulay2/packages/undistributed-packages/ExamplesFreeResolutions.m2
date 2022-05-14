@@ -1016,8 +1016,9 @@ peek M.cache#(ResolutionContext{}).Result.Resolution.RawComputation
 
 restart
 needsPackage "ExamplesFreeResolutions"
-I = CNC 13;
+I = CNC 15;
 R = ring I
+-- running these over and over leaks memory (either parallel or serial)
 I = ideal I_*;
 elapsedTime F = res(I, FastNonminimal => true)
 betti F
