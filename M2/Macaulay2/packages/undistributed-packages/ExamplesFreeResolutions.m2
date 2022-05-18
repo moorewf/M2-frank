@@ -1016,13 +1016,14 @@ peek M.cache#(ResolutionContext{}).Result.Resolution.RawComputation
 
 restart
 needsPackage "ExamplesFreeResolutions"
-I = CNC 15;
-R = ring I
+  dir = "./ExamplesFreeResolutions/ExamplesAndTimings/"
+  I = getCNC(15, Directory => dir);
+  R = ring I
 -- running these over and over leaks memory (either parallel or serial)
-I = ideal I_*;
-elapsedTime F = res(I, FastNonminimal => true)
+  I = ideal I_*;
+  elapsedTime F = res(I, FastNonminimal => true)
 betti F
-minimalBetti I
+elapsedTime minimalBetti I
 
 restart
 I = Grassmannian(1, 7, CoefficientRing => ZZ/101);

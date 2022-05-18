@@ -88,8 +88,8 @@ class DMat
       mArray = nullptr;
     else
       {
-        mArray = newarray(ElementType,len);
-        //        mArray = new ElementType[len];
+        //mArray = newarray(ElementType,len);
+        mArray = new ElementType[len];
         for (size_t i = 0; i < len; i++)
           {
             ring().init(mArray[i]);
@@ -105,8 +105,8 @@ class DMat
       mArray = nullptr;
     else
       {
-        mArray = newarray(ElementType,len);
-        //        mArray = new ElementType[len];
+        //mArray = newarray(ElementType,len);
+        mArray = new ElementType[len];
         for (size_t i = 0; i < len; i++)
           ring().init_set(mArray[i], M.array()[i]);
       }
@@ -115,8 +115,8 @@ class DMat
   {
     size_t len = mNumRows * mNumColumns;
     for (size_t i = 0; i < len; i++) ring().clear(mArray[i]);
-    //    if (mArray != 0) delete[] mArray;
-    if (mArray != nullptr) freemem(mArray);
+    if (mArray != 0) delete[] mArray;
+    //if (mArray != nullptr) freemem(mArray);
   }
 
   // swap the actual matrices of 'this' and 'M'.

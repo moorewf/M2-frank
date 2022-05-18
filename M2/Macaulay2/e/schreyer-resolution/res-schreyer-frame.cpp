@@ -173,7 +173,7 @@ BettiDisplay SchreyerFrame::minimalBettiNumbers(bool stop_after_degree,
     }
 
   // build the dependency graph
-  makeDependencyGraph(mDepGraph,length_limit+1,top_degree - mLoSlantedDegree,false);
+  makeDependencyGraph(mDepGraph,length_limit+1,top_degree - mLoSlantedDegree,true);
   mDepGraph.startComputation();
   mDepGraph.waitForCompletion();
 

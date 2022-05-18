@@ -14,10 +14,6 @@ int DependencyGraph::addVertex(int level, int slantedDegree)
 				rankNode,
 				minimalBettiNode});
 
-   // add flows from the fill matrix stage to the reduction stage, and from reduction to rank
-   // FM: do we have to add other edges for the reduction and rank computations, or will this suffice?
-   tbb::flow::make_edge(* fillAndReduceNode,* rankNode);
-
    return mVertices.size()-1;
 }
 
@@ -30,6 +26,7 @@ void DependencyGraph::addFillMatrixEdge(int source, int target)
 void DependencyGraph::addMinimalBettiEdge(int level, int slantedDegree, int nLevels, int nSlantedDegrees)
 {
    int target = getIndex(level,slantedDegree,nLevels,nSlantedDegrees);
+   tbb::flow::make_edge(* mVertices[target].mFillAndReduceNode, * mVertices[target].mRankNode);
    tbb::flow::make_edge(* mVertices[target].mRankNode, * mVertices[target].mMinimalBettiNode);
    
    int source = getIndex(level+1,slantedDegree-1,nLevels,nSlantedDegrees);
@@ -44,7 +41,7 @@ TBBNodePtr DependencyGraph::createFillAndReduceNode(int lev, int sldeg)
                                 {
 				  int& status = mFrame->mComputationStatus.entry(sldeg,lev);
 				  if (status != 1) return msg;
-                  F4Res computer {*mFrame};
+                                  F4Res computer {*mFrame};
 				  computer.construct(lev,sldeg + lev);
 				  //mFrame->mComputer->construct(lev,sldeg + lev);
 				  std::lock_guard<std::mutex> guard(mMutex);
@@ -62,21 +59,27 @@ TBBNodePtr DependencyGraph::createRankNode(int lev, int sldeg)
   return std::make_shared<TBBNode>(mTBBGraph,
                                 [lev, sldeg, this](const tbb::flow::continue_msg &msg)
                                 {
-				  std::lock_guard<std::mutex> guard(mMutex);
-				  //int& status = mFrame->mComputationStatus.entry(sldeg,lev);
-				  //if (status != 2) return msg;
+				  int& status = mFrame->mComputationStatus.entry(sldeg,lev);
+				  if (status != 2) return msg;
 
+                                  {
+                                    std::lock_guard<std::mutex> guard(mMutex);
+                                    std::cout << "starting rank node lev=" << lev << " sldeg="
+                                            << sldeg << " sum=" << lev + sldeg << std::endl;
+                                  }
+                                  
+                                  int rk = mFrame->rank(sldeg,lev);
+
+				  std::lock_guard<std::mutex> guard(mMutex);
                                   std::cout << "rank node           lev=" << lev << " sldeg="
                                             << sldeg << " sum=" << lev + sldeg << std::endl;
-
-                                  //int rk = mFrame->rank(sldeg,lev);
-                                  //if (rk > 0)
-                                  //{
-                                  //   mFrame->mBettiMinimal.entry(sldeg, lev) -= rk;
-                                  //   if (sldeg <= mFrame->mHiSlantedDegree and lev > 0)
-                                  //     mFrame->mBettiMinimal.entry(sldeg + 1, lev - 1) -= rk;
-                                  //}
-                                  //status = 3;
+                                  if (rk > 0)
+                                  {
+                                    mFrame->mBettiMinimal.entry(sldeg, lev) -= rk;
+                                    if (sldeg <= mFrame->mHiSlantedDegree and lev > 0)
+                                      mFrame->mBettiMinimal.entry(sldeg + 1, lev - 1) -= rk;
+                                  }
+                                  status = 3;
                                   return msg;
                                 });
 }
@@ -152,6 +155,8 @@ void makeDependencyGraph(DependencyGraph &G, int nlevels, int nslanted_degrees, 
           G.addFillMatrixEdge(getIndex(lev,sldeg-1,nlevels,nslanted_degrees),
                               getIndex(lev,sldeg,nlevels,nslanted_degrees));
 	if ((lev < nlevels-1) && doMinimalBetti)
-	  G.addMinimalBettiEdge(lev,sldeg,nlevels,nslanted_degrees);
+          {
+            G.addMinimalBettiEdge(lev,sldeg,nlevels,nslanted_degrees);
+          }
       }
 }
