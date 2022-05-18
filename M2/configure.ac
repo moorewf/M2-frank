@@ -167,7 +167,6 @@ AC_CHECK_PROGS(OBJDUMP,objdump,false)
 AC_CHECK_PROGS(OBJCOPY,objcopy,false)
 AC_CHECK_PROGS(LDD,ldd,false)
 AC_CHECK_PROGS(GIT,git,false)
-AC_CHECK_PROGS(NPM,npm,false)
 
 AC_CHECK_TOOL(AR,ar,false)
 AC_CHECK_TOOL(AS,as,false)
@@ -231,6 +230,23 @@ else for DOCTYPE in $DOCUMENTATION
 fi
 
 AC_SUBST(DOCUMENTATION)
+
+AC_ARG_ENABLE([syntax-highlighting],
+    [AS_HELP_STRING([--enable-syntax-highlighting],
+	[whether to enable syntax highlighting using highlightjs in the html
+	 documentation])],
+    [HIGHLIGHTJS=$enableval],
+    [HIGHLIGHTJS=no])
+
+if test "x$HIGHLIGHTJS" = xyes
+then AC_CHECK_PROGS(NPM,npm,false)
+     if test "x$NPM" = xfalse
+     then AC_MSG_ERROR([npm is required for syntax highlighting])
+     fi
+else AC_SUBST(NPM,false)
+fi
+
+AC_SUBST(HIGHLIGHTJS)
 
 AC_CANONICAL_HOST()
 AC_SUBST(ARCH,$build_cpu)
@@ -1257,11 +1273,11 @@ then AC_MSG_NOTICE(readline library will be compiled)
      BUILTLIBS="-lreadline -lhistory $BUILTLIBS"
 fi
 
-AC_ARG_ENABLE([build-memtailor],
-    [AS_HELP_STRING([--disable-build-memtailor],
+AC_ARG_WITH([system-memtailor],
+    [AS_HELP_STRING([--with-system-memtailor],
 	[use system memtailor instead of building git submodule])],,
-    [enable_build_memtailor=yes])
-if test $enable_build_memtailor = yes
+    [with_system_memtailor=no])
+if test $with_system_memtailor = no
 then
     BUILD_memtailor=yes
     BUILTLIBS="-lmemtailor $BUILTLIBS"
@@ -1270,11 +1286,11 @@ else AC_LANG(C++)
     AC_CHECK_HEADER(memtailor.h,,BUILD_memtailor=yes)
 fi
 
-AC_ARG_ENABLE([build-mathic],
-    [AS_HELP_STRING([--disable-build-mathic],
+AC_ARG_WITH([system-mathic],
+    [AS_HELP_STRING([--with-system-mathic],
 	[use system mathic instead of building git submodule])],,
-    [enable_build_mathic=yes])
-if test $enable_build_mathic = yes
+    [with_system_mathic=no])
+if test $with_system_mathic = no
 then
     BUILD_mathic=yes
     BUILTLIBS="-lmathic $BUILTLIBS"
@@ -1283,11 +1299,11 @@ else AC_LANG(C++)
     AC_CHECK_HEADER(mathic.h,,BUILD_mathic=yes)
 fi
 
-AC_ARG_ENABLE([build-mathicgb],
-    [AS_HELP_STRING([--disable-build-mathicgb],
+AC_ARG_WITH([system-mathicgb],
+    [AS_HELP_STRING([--with-system-mathicgb],
 	[use system mathicgb instead of building git submodule])],,
-    [enable_build_mathicgb=yes])
-if test $enable_build_mathicgb = yes
+    [with_system_mathicgb=no])
+if test $with_system_mathicgb = no
 then
     BUILD_mathicgb=yes
     BUILTLIBS="-lmathicgb $BUILTLIBS"
@@ -1407,7 +1423,8 @@ then AC_MSG_CHECKING([for fflas_ffpack library, version at least 2])
           FFLAS_FFPACK_CXXFLAGS=$(for x in $(fflas-ffpack-config --cflags 2>&1) ; do case $x in (-I*) /bin/echo -n "$x " ;; esac done)
 	  AC_MSG_NOTICE([adding fflas_ffpack flags $FFLAS_FFPACK_CXXFLAGS])
           M2_CXXFLAGS="$M2_CXXFLAGS $FFLAS_FFPACK_CXXFLAGS"
-	  LIBS="$LIBS `fflas-ffpack-config --libs`"
+	  LIBS="$LIBS `fflas-ffpack-config --libs`" dnl note: this might add "-Xpreprocessor -fopenmp" to LIBS, and that will confuse libtool
+	  LIBS=`echo $LIBS | sed 's/-Xpreprocessor -fopenmp//'`
      else AC_MSG_RESULT(not found, will build)
           BUILD_fflas_ffpack=yes
      fi
