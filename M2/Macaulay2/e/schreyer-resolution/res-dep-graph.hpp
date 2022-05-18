@@ -77,18 +77,4 @@ public:
 
 void makeDependencyGraph(DependencyGraph &G, int nlevels, int nslanted_degrees, bool doMinimalBetti);
 
-class ComputerPool
-{
-private:
-  SchreyerFrame& mFrame;
-  std::vector<std::shared_ptr<F4Res>> mComputerPool;
-  std::mutex mMutex;
-  int mNextComputer;
-  int mMaxComputers;
-
-public:
-  ComputerPool(SchreyerFrame& frame, int maxComputers);
-  std::shared_ptr<F4Res> getComputer();
-};
-
 #endif

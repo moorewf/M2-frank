@@ -44,11 +44,10 @@ TBBNodePtr DependencyGraph::createFillAndReduceNode(int lev, int sldeg)
                                 {
 				  int& status = mFrame->mComputationStatus.entry(sldeg,lev);
 				  if (status != 1) return msg;
-
+                  F4Res computer {*mFrame};
+				  computer.construct(lev,sldeg + lev);
+				  //mFrame->mComputer->construct(lev,sldeg + lev);
 				  std::lock_guard<std::mutex> guard(mMutex);
-				  //auto computer = mFrame->mComputerPool.getComputer();
-				  //computer->construct(lev,sldeg + lev);
-				  mFrame->mComputer->construct(lev,sldeg + lev);
 				  
                                   std::cout << "fill matrix node    lev=" << lev << " sldeg="
                                             << sldeg << " sum=" << lev + sldeg << std::endl;
@@ -155,21 +154,4 @@ void makeDependencyGraph(DependencyGraph &G, int nlevels, int nslanted_degrees, 
 	if ((lev < nlevels-1) && doMinimalBetti)
 	  G.addMinimalBettiEdge(lev,sldeg,nlevels,nslanted_degrees);
       }
-}
-
-ComputerPool::ComputerPool(SchreyerFrame &frame, int maxComputers)
-   : mFrame(frame),
-     mNextComputer(0),
-     mMaxComputers(maxComputers)
-{
-  for (int i = 0; i < mMaxComputers; i++)
-     mComputerPool.emplace_back(new F4Res(mFrame));
-}
-
-std::shared_ptr<F4Res> ComputerPool::getComputer()
-{
-   std::lock_guard<std::mutex> guard(mMutex);
-   auto result = mComputerPool[mNextComputer++];
-   if (mNextComputer >= mMaxComputers) mNextComputer = 0;
-   return result;
 }
