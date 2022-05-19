@@ -610,6 +610,59 @@ int SchreyerFrame::rankUsingSparseMatrix(Gen& D)
   return rk;
 }
 
+#if 0
+template<typename Gen>
+int SchreyerFrame::rankUsingFFPACK(Gen& D, bool transposed)
+{
+  auto charac = vectorArithmetic().ring()->characteristic();
+  Givaro::Modular<double> field(static_cast<double>(charac));
+  // types of elements: should be double.  Givaro::Modular<double>::Element  
+  // initialize an element from a long as field.init(result, long).
+
+  // 1. Create array
+  double* array = new double[numrows * numcols];
+  // 2. fill it.
+  TODO.
+  // 3. call rank function.
+  size_t result = FFPACK::Rank(field, numrows, numcols, array, numcols);
+  // 4. remove array.
+  delete [] array;
+
+
+  typedef Givaro::Modular<double> FieldType;
+
+  unsigned int charac =
+      static_cast<unsigned int>(vectorArithmetic().ring()->characteristic());
+  M2::ARingZZpFFPACK R(charac);
+  
+  DMat<M2::ARingZZpFFPACK> M(R, 0, 0);
+  if (!transposed)
+    setDMatFromSparseMatrixGenerator(D, M);
+  else
+    setDMatFromSparseMatrixGeneratorTransposed(D, M);
+  auto a = DMatLinAlg<M2::ARingZZpFFPACK>(M);
+  //  std::cout << "---- dense matrix ----" << std::endl;
+  //  displayMat(M);
+  //  std::cout << "----------------------" << std::endl;
+  auto timeA = timer();
+  int rk = static_cast<int>(a.rank());
+  auto timeB = timer();
+  double nsecs = seconds(timeB - timeA);
+
+  timeComputeRanks += nsecs;
+
+  if (M2_gbTrace >= 2)
+    {
+      if (M.numRows() > 0 and M.numColumns() > 0)
+        std::cout << "   dense rank = " << rk
+                  << " time = " << nsecs << " sec"
+                  << std::endl;
+    }
+
+  return rk;
+}
+#endif
+
 template<typename Gen>
 int SchreyerFrame::rankUsingDenseMatrix(Gen& D, bool transposed)
 {

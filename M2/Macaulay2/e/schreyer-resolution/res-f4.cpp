@@ -487,9 +487,10 @@ void F4Res::gaussReduce()
   // Reduce to zero every spair. Recording creates the
   // corresponding syzygy, which is auto-reduced and correctly ordered.
 
-  mtbb::parallel_for(mtbb::blocked_range<int>{0,(int)mSPairs.size()},
+  mtbb::parallel_for(mtbb::blocked_range<int>{0,(int)mSPairs.size(),200},
                     [&](const mtbb::blocked_range<int>& r)
                     {
+                      std::cout << "gauss reduce, " << r.begin() << "..<" << r.end() << " total: " << mSPairs.size() << std::endl;
                       threadLocalDense_t::reference my_dense = threadLocalDense.local();
                       for (auto i = r.begin(); i != r.end(); ++i) {
                         gaussReduceRow(i, my_dense, onlyConstantMaps, track);
