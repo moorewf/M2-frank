@@ -153,6 +153,7 @@ set(CPPONLYFILES
 # these files all have .hpp and .cpp files
 # MES TODO: put these NCAlgebra files (and friends) into alpha order in list
 set(SRCLIST
+  SparseMatrixZZp
   myalloc
   matrix-ncbasis
   M2FreeAlgebraQuotient
@@ -421,6 +422,7 @@ if(BUILD_TESTING)
   # TODO: overflow tests
   # TODO: break up into multiple branches
   add_executable(M2-unit-tests
+    unit-tests/TestSparseMatrixZZp.cpp
     unit-tests/M2-cpp-replacement.cpp
     unit-tests/M2-replacement.c
     unit-tests/M2mem-replacement.c
