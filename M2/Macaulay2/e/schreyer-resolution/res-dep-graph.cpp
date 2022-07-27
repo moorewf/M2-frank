@@ -59,27 +59,27 @@ TBBNodePtr DependencyGraph::createRankNode(int lev, int sldeg)
   return std::make_shared<TBBNode>(mTBBGraph,
                                 [lev, sldeg, this](const tbb::flow::continue_msg &msg)
                                 {
-				  int& status = mFrame->mComputationStatus.entry(sldeg,lev);
-				  if (status != 2) return msg;
+				  // int& status = mFrame->mComputationStatus.entry(sldeg,lev);
+				  // if (status != 2) return msg;
 
-                                  {
-                                    std::lock_guard<std::mutex> guard(mMutex);
-                                    std::cout << "starting rank node lev=" << lev << " sldeg="
-                                            << sldeg << " sum=" << lev + sldeg << std::endl;
-                                  }
+                                  // {
+                                  //   std::lock_guard<std::mutex> guard(mMutex);
+                                  //   std::cout << "starting rank node lev=" << lev << " sldeg="
+                                  //           << sldeg << " sum=" << lev + sldeg << std::endl;
+                                  // }
                                   
-                                  int rk = mFrame->rank(sldeg,lev);
+                                  // int rk = mFrame->rank(sldeg,lev);
 
 				  std::lock_guard<std::mutex> guard(mMutex);
                                   std::cout << "rank node           lev=" << lev << " sldeg="
                                             << sldeg << " sum=" << lev + sldeg << std::endl;
-                                  if (rk > 0)
-                                  {
-                                    mFrame->mBettiMinimal.entry(sldeg, lev) -= rk;
-                                    if (sldeg <= mFrame->mHiSlantedDegree and lev > 0)
-                                      mFrame->mBettiMinimal.entry(sldeg + 1, lev - 1) -= rk;
-                                  }
-                                  status = 3;
+                                  // if (rk > 0)
+                                  // {
+                                  //   mFrame->mBettiMinimal.entry(sldeg, lev) -= rk;
+                                  //   if (sldeg <= mFrame->mHiSlantedDegree and lev > 0)
+                                  //     mFrame->mBettiMinimal.entry(sldeg + 1, lev - 1) -= rk;
+                                  // }
+                                  // status = 3;
                                   return msg;
                                 });
 }

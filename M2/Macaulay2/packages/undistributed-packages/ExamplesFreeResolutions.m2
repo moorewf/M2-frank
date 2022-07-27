@@ -1026,7 +1026,32 @@ betti F
 elapsedTime minimalBetti I
 
 restart
-I = Grassmannian(1, 7, CoefficientRing => ZZ/101);
+--I = Grassmannian(1, 7, CoefficientRing => ZZ/101);
+I = Grassmannian(1, 6, CoefficientRing => ZZ/101);
+--I = Grassmannian(2, 6, CoefficientRing => ZZ/101);
 R = ring I
+S = 
 I = ideal I_*;
+gbTrace = 2
 elapsedTime F = res(I, FastNonminimal => true)
+-- 252 seconds on dependencyGraph > 19GB
+-- 629 seconds upstream >18.5GB
+elapsedTime minimalBetti I
+
+restart
+d = 6
+k = 2
+J = Grassmannian(k,d, CoefficientRing => ZZ/31, Variable => T);
+R = ring J
+degList = apply(subsets(toList(0..d),k+1), p -> apply(d+1, i -> if member(i,p) then 1 else 0));
+degList = toList(numgens R : 1)
+S = ZZ/31 [gens R, MonomialSize => 8, Degrees=>degList]
+phi = map(S,R,gens S)
+I = phi J;
+gbTrace = 2
+elapsedTime F = res(I, FastNonminimal => true, LengthLimit => 5, DegreeLimit => 2)
+elapsedTime minimalBetti(I, LengthLimit => 5, DegreeLimit => 2) -- (146s parallel, 525 serial, 5x reduction speedup)
+
+n = 30000
+m = 32003
+1 - n*(n+3)/(2*m)

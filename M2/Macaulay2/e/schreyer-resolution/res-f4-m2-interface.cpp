@@ -746,7 +746,7 @@ int SchreyerFrame::rank(int slanted_degree, int lev)
     }
   int rkSparse = -1;
   int rkDense = -1;
-  if (false and frac_nonzero <= .007)
+  if (frac_nonzero <= .007)
     {
       rkSparse = rankUsingSparseMatrix(D);
       return rkSparse;
