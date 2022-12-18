@@ -153,7 +153,8 @@ set(CPPONLYFILES
 # these files all have .hpp and .cpp files
 # MES TODO: put these NCAlgebra files (and friends) into alpha order in list
 set(SRCLIST
-  SparseMatrixZZp
+  sparse-matrix/SparseMatrixZZp
+  sparse-matrix/PivotHelper
   myalloc
   matrix-ncbasis
   M2FreeAlgebraQuotient
