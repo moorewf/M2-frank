@@ -155,6 +155,7 @@ set(CPPONLYFILES
 set(SRCLIST
   sparse-matrix/SparseMatrixZZp
   sparse-matrix/PivotHelper
+  sparse-matrix/PivotGraph
   myalloc
   matrix-ncbasis
   M2FreeAlgebraQuotient
