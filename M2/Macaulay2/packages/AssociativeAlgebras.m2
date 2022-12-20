@@ -776,7 +776,7 @@ skewPolynomialRing (Ring,RingElement,List) := (R,skewElt,varList) -> (
    B
 )
 
-threeDimSklyanin = method(Options => {DegreeLimit => 6})
+threeDimSklyanin = method(Options => {DegreeLimit => 6, Strategy => "F4"})
 threeDimSklyanin (Ring, List, List) := opts -> (R, params, varList) -> (
    if #params != 3 or #varList != 3 then error "Expected lists of length 3.";
    if instance(varList#0, R) or instance(varList#0,ZZ) or instance(varList#0,QQ) then
@@ -786,7 +786,7 @@ threeDimSklyanin (Ring, List, List) := opts -> (R, params, varList) -> (
    I := ideal {params#0*gensA#1*gensA#2+params#1*gensA#2*gensA#1+params#2*(gensA#0)^2,
        params#0*gensA#2*gensA#0+params#1*gensA#0*gensA#2+params#2*(gensA#1)^2,
        params#0*gensA#0*gensA#1+params#1*gensA#1*gensA#0+params#2*(gensA#2)^2};
-   Igb := NCGB(I, opts.DegreeLimit, Strategy=>"F4");
+   Igb := NCGB(I, opts.DegreeLimit, Strategy=>opts.Strategy);
    B := A/I;
    B
 )
@@ -795,7 +795,7 @@ threeDimSklyanin (Ring, List) := opts -> (R, varList) -> (
    threeDimSklyanin(R,{random(QQ),random(QQ), random(QQ)}, varList, opts)
 )
 
-fourDimSklyanin = method(Options => {DegreeLimit => 6})
+fourDimSklyanin = method(Options => {DegreeLimit => 6, Strategy => "F4"})
 fourDimSklyanin (Ring, List, List) := opts -> (R, params, varList) -> (
    if #params != 3 or #varList != 4 then error "Expected three parameters and four variables.";
    if instance(varList#0, R) or instance(varList#0,ZZ) or instance(varList#0,QQ) then
@@ -811,7 +811,7 @@ fourDimSklyanin (Ring, List, List) := opts -> (R, params, varList) -> (
    g3 := (varList#0*varList#3 + varList#3*varList#0) - (varList#1*varList#2 - varList#2*varList#1);
 
    I := ideal {f1,f2,f3,g1,g2,g3};
-   Igb := NCGB(I, opts.DegreeLimit, Strategy=>"F4");
+   Igb := NCGB(I, opts.DegreeLimit, Strategy=>opts.Strategy);
    B := A/I;
    B
 )
@@ -1451,6 +1451,66 @@ rightKernel Matrix := opts -> M -> (
    sourceDeg := (linIndepKerGens / degree) / (d -> -d+{1});
    result := map(B^targetDeg, B^sourceDeg, (psiB tempKerMat)*linIndepKer);
    result
+)
+
+--- 10/2/2022: Added some 
+
+superpotential = method(Options => {Strategy => "F4", GorensteinParameter => -1})
+superpotential FreeAlgebraQuotient := opts -> B -> (
+   A := ambient B;
+   kk := coefficientRing A;
+   m := first degree first (ideal B)_*;
+   koszI := homogDual ideal B;
+   d := numgens B;
+   gorParam := if opts.GorensteinParameter == -1 then d else opts.GorensteinParameter;
+   koszIgb := NCGB(koszI,gorParam+1,Strategy => opts.Strategy);
+   koszB := A/koszI;
+   --allBasis := flatten apply(gorParam, i -> flatten entries ncBasis(i,koszB));
+   --topDeg := max apply(allBasis, m -> first degree m);
+   topForm := ncBasis(gorParam,koszB);
+   if numcols topForm != 1 then error ("Expected AS-regular algebra of Gorenstein Parameter" | toString gorParam);
+   deg1Basis := flatten entries ncBasis(1,A);
+   phi := map(koszB,A,gens koszB);
+   bigBasis := ncBasis(gorParam,A);
+   first flatten entries (bigBasis * (transpose sub(last coefficients(phi bigBasis, Monomials=>topForm),kk)))
+)
+
+isSuperpotential = method()
+isSuperpotential RingElement := f -> (
+   X := matrix entries transpose splitElement f;
+   if rank X != numcols X then return false;
+   Y := matrix entries transpose splitElement cycleElement f;
+   if rank Y != numcols Y then return false;
+   --P := (Y // X);
+   --return ((Y - X*P) == 0);
+   return true;
+)
+
+cycleElement = method()
+cycleElement RingElement := f -> (
+   varList := toVariableList f;
+   monLen := #(last first varList);
+   sum apply(varList, p -> p#0*((p#1)#(monLen-1))*product(drop(p#1,-1)))
+)
+
+splitElement = method()
+splitElement RingElement := f -> (
+   A := ring f;
+   kk := coefficientRing A;
+   d := first degree f;
+   basis1 := flatten entries ncBasis(1,A);
+   basisrest := flatten entries ncBasis(d-1,A);
+   matrix apply(basis1, x -> apply(basisrest, m -> sub(first flatten entries last coefficients(f,Monomials=>matrix {{x*m}}),kk)))
+)
+
+nakayamaAut = method(Options => options superpotential)
+nakayamaAut FreeAlgebraQuotient := opts -> B -> (
+   sp := superpotential(B,opts);
+   X := matrix entries transpose splitElement sp;
+   Y := matrix entries transpose splitElement cycleElement sp;
+   -- should multiply by (-1)^(gldim + 1) here, but this is expensive to compute and should be known by the user.
+   P := (Y // X);
+   map(B,B,flatten entries (P*(transpose ncBasis(1,B))))
 )
 
 --- load the tests
