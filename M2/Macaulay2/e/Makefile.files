@@ -9,6 +9,7 @@ INTERFACE2 = interrupted
 #  NCAlgebras/SuffixTree \
 
 INTERFACE = \
+        sparse-matrix/Vectors \
 	sparse-matrix/SparseMatrixZZp \
 	sparse-matrix/PivotHelper \
 	sparse-matrix/PivotGraph \
@@ -213,6 +214,8 @@ NAMES_H = \
 	f4/f4-types \
 	f4/memblock \
 	VectorArithmetic \
+	sparse-matrix/Iterators \
+        sparse-matrix/MatrixOps \
 	ARingElem \
 	MemoryBlock \
 	NCAlgebras/Range \
