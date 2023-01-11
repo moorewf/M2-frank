@@ -275,7 +275,7 @@ setupMethods((), {
 	  leadComponent, assign, realPart, imaginaryPart, conjugate,
 	  relations, cone, inverse, numeric, numericInterval, floor, ceiling, round, degree, multidegree,
 	  presentation, dismiss, precision, 
-	  norm, clean, fraction, part, preimage,
+	  norm, clean, fraction, part,
 	  hasEngineLinearAlgebra, nullSpace,
       isBasicMatrix, basicDet, basicInverse, basicKernel, basicRank, basicSolve, basicRankProfile
 	  })
@@ -353,7 +353,7 @@ map = method(
 setupMethods(Dispatch => Thing, {transpose} )
 setupMethods(TypicalValue => Boolean,
      {isBorel, isWellDefined, isInjective, isSurjective, isUnit,
-	  isSubset,isHomogeneous, isIsomorphism, isField, isConstant
+	  isSubset,isHomogeneous, isIsomorphism, isField
 	  })
 setupMethods(TypicalValue => ZZ, {
 	binomial, char, degreeLength, depth, dim, euler, genus, height,
