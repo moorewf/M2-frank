@@ -303,7 +303,7 @@ polyDiffMonomial := (A,m) -> (
   allTerms := apply(#monSupport, i -> (product apply(i, j -> (-1)^((first degree monSupport#j)*(monExponents#j))))*
                                       (product take(monSupportPowers,i))*
   -- below are both versions of differential, for divided powers and without, should we want to use divided powers later.
-  --                                  (A.diff(monSupport#i)*(monSupport#i)^((monExponents#i)-1))*  -- divided powers
+  --                                  (A.diff(monSupport#i)*(monSupport#i)^((monExponents#i)-1))*  -- divided powers (but product uses polynomial, so don't use)
                                       (A.diff(monSupport#i)*(monExponents#i)*(monSupport#i)^((monExponents#i)-1))* -- polynomial subalgebra
                                       (product drop(monSupportPowers,i+1)));
   justCoeff * (sum allTerms)
