@@ -199,6 +199,8 @@ complexMap (DGModuleMap, ZZ, ZZ) := (f, minf, maxf) -> (
 )
 
 DGModule Array := (U,ar) -> (
+   -- new action is a.u = (-1)^|a|(au).  So how do
+   -- we incorporate the sign?
    A := dgAlgebra U;
    R := ring A;
    zeroDegR := if isHomogeneous R then degree (1_R) else {};
@@ -289,19 +291,23 @@ semiFreeResolution (DGAlgebra,Module,ZZ) := (A,M,d) -> (
    -- the first step is a little different than all the others,
    -- since we just add in basis elements corresponding to generators and
    -- relations of M
-   Unat := (A.natural)^tarMDeg ++ (A.natural)^srcMDeg;
-   relsMatrix := basis({0},Unat)*presM;
+   Fnat := (A.natural)^tarMDeg ++ (A.natural)^srcMDeg;
+   relsMatrix := basis({0},Fnat)*presM;
    newCycles := apply(numcols presM, i -> relsMatrix_{i});
-   zeroUnat := map(Unat,(A.natural)^1,0);
-   U := dgModule(A,Unat,toList(numrows presM : zeroUnat) | newCycles);
+   zeroUnat := map(Fnat,(A.natural)^1,0);
+   F := dgModule(A,Fnat,toList(numrows presM : zeroUnat) | newCycles);
+   DGM := moduleAsDGModule(A,M);
    homDeg = homDeg + 1;
 
    -- at this point, we want to loop until homDeg == d
    while (homDeg != d) do (
-      U = killCyclesInDegree(U,homDeg);
+      F = killCyclesInDegree(F,homDeg);
       homDeg = homDeg + 1;
    );
-   U
+   eps := map(DGM,F,map(DGM.natural,F.natural,(F.natural)^[0]));
+   F.cache#"augmentation" = eps;
+   
+   F
 )
 
 semiFreeResolution (DGModule,ZZ) := (U,d) -> (
@@ -328,7 +334,9 @@ semiFreeResolution (DGModule,ZZ) := (U,d) -> (
       eps = killCyclesInDegree(eps,curDeg);
       curDeg = curDeg + 1;
    ); 
-   eps
+   F = source eps;
+   F.cache#"augmentation" = eps;
+   F
 )
 
 minHomology = method()
@@ -518,6 +526,7 @@ R = S/I
 K = koszulComplexDGA R
 kMod = coker vars K.ring
 kDGMod = moduleAsDGModule (K,kMod)
+Hom(kDGMod.natural,kDGMod.natural)
 complex kDGMod
 complex (kDGMod[-1])
 complex (kDGMod[1])
@@ -812,6 +821,12 @@ load "DGModules.m2"
 R = QQ[x,y]/ideal(x^5,y^5)
 K = koszulComplexDGA({x^4,x^3*y},Variable => "S")
 K2 = koszulComplexDGA({x,y},Variable => "T")
+phi = dgAlgebraMap(K2,K,matrix{{x^3*T_1,x^3*T_2}})
+isWellDefined phi
+-- would like to just do:
+--pushForward(phi,K2^1)
+-- but it needs pushForward(phi.natural,(K2.natural)^1) to work
+pushForward(phi.natural,(K2.natural)^1)  -- fails
 gensSet = basis K2.natural
 UnatAmb = (K.natural)^(apply(degrees source gensSet, d -> -d))
 gensSetList = flatten entries gensSet
@@ -821,7 +836,9 @@ s1Map = map(UnatAmb,,matrix {apply(numcols e1Map, c -> (S_1*id_(UnatAmb))_{c} - 
 s2Map = map(UnatAmb,,matrix {apply(numcols e2Map, c -> (S_2*id_(UnatAmb))_{c} - e2Map_{c})})
 Unat = coker (s1Map | s2Map)
 U = dgModule(K,Unat,{map(Unat,K.natural^1,0),x*Unat_{0},x*Unat_{3} - y*Unat_{1},y*Unat_{0}})
-eps = semiFreeResolution(U,5)
+F = semiFreeResolution(U,5)
+eps = F.cache#"augmentation"
+isHomogeneous complex F
 isHomogeneous cone complexMap eps
 prune HH cone complexMap eps
 
@@ -831,7 +848,9 @@ load "DGModules.m2"
 R = QQ[x,y]
 K = koszulComplexDGA {x^2,x*y}
 M = coker vars R
-U = semiFreeResolution(K,M,4);
+U = semiFreeResolution(K,M,4)
+eps = U.cache#"augmentation"
+prune HH cone complexMap eps
 diffMat = differentialMatrix U
 Ucx = complex U
 U.natural.cache.components
@@ -874,7 +893,15 @@ M = coker vars R
 U = moduleAsDGModule(K,M)
 complex U
 
+-- suppose A is a graded commutative DG algebra
+-- phi : A -> A defined by phi(a) = (-1)^|a|a for homogeneous a.
+-- Is phi a DGAlgebra homomorphism?
+-- alg hom... yes
+-- phi(ab) = (-1)^{|a||b|}ab = (-1)^|a|a(-1)^|b|b = phi(a)phi(b)
+-- comm with diff... no
+-- phi(del(a)) = (-1)^{|a|-1}del(a)
+-- del(phi(a)) = del((-1)^|a|a) = (-1)^|a|del(a)
 
-0   0   0    0
+-- suppose U has presentation given by a matrix P over a DGA
+-- let phi be as above.  Then phi(P) is a presentation for the shift of U.
 
-U_2 U_1 U_0  0
