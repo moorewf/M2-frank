@@ -145,7 +145,7 @@ for t from 3 to order do(
     for i from con_0 to con_1 do(
 	(C,K) := componentsAndIndices Bt_i;
 	for k in K do (
-	    if sum k>limit then m#k = map(B_(i-1), Bt_i, 0) 
+	    if sum k>limit then m#k = map(B_(i-1), source Bt_i_[k], 0) 
 	    else (
 	    U := select(algebraMapComponents k, v -> #v_3>1);
     	    dm := - sum(
@@ -229,7 +229,8 @@ Bt := BBG#t; --labeledTensorComplex (toList(2:B)|{G}, LengthLimit => limit);
     for i from con_0 to con_1 do(
 	(C,K) := componentsAndIndices Bt_i;
 	for k in K do (
-	    if sum k>limit then m#k = map(G_(i-1), Bt_i, 0) 
+   	    if sum k>limit then m#k = map(B_(i-1), source Bt_i_[k], 0) 
+	    --if sum k>limit then m#k = map(G_(i-1), Bt_i, 0) 
 	    else (
 	    U := select(mapComponents k, v -> #v_3>1); -- the case #v3 = 1 would be d m#k
     	    mkTerms := for v in U list (
@@ -240,7 +241,6 @@ Bt := BBG#t; --labeledTensorComplex (toList(2:B)|{G}, LengthLimit => limit);
 		fac1 := tensor(S,apply(k1, ell -> B_ell));
 		fac3 := tensor(S,apply(k3, ell -> B_ell));
 		fac4 := G_k4;
-		--error "err";
 		if v_2 == #k-1 then (
 		   mMap1 := if not m#?(v_3) then map(S^0,tensor (apply(drop(v_3,-1),ell -> B_ell)|{G_(last v_3)}),0) else m#(v_3)_[v_3];
                    mMap2 := if not m#?(k2) then map(S^0,tensor (apply(drop(k2,-1),ell -> B_ell)|{G_(last k2)}),0) else m#(k2)_[k2];
