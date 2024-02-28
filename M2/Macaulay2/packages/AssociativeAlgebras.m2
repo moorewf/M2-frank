@@ -128,6 +128,8 @@ importFrom_Core{"raw","rawPairs","rawQuotientRing","rawGetTerms",
     "rawNCBasis","rawNCReductionTwoSided","rawNCGroebnerBasisTwoSided",
     "RawRingElement","rawPromote"}
 
+importFrom_Core{"QQFlint"}
+
 --- debugging/benchmark tools
 BUG = str -> ()
 DEVELOPMENT = str -> ()
@@ -351,7 +353,7 @@ NCGB(Ideal, ZZ) := opts -> (I, maxdeg) -> (
     if not I.cache.?NCGB or I.cache.NCGB#0 < maxdeg then (
         tobecomputed := raw if I.cache.?NCGB then I.cache.NCGB#1 else gens I;
 	possField := ZZ/(char ultimate(coefficientRing, ring I));
-	f4Allowed := (possField === (coefficientRing ring I)); -- or instance(coefficientRing ring I, GaloisField) or coefficientRing ring I === QQ;
+	f4Allowed := (possField === (coefficientRing ring I)) or instance(coefficientRing ring I, GaloisField) or coefficientRing ring I === QQ or coefficientRing ring I === QQFlint;
 	if not isHomogeneous I or (not f4Allowed and (strat == "F4" or strat == "F4Parallel")) then (
 	   -- need to change to naive algorithm if I is not homogeneous at this point.
 	   << "Warning:  F4 Algorithm not available over current coefficient ring or inhomogeneous ideal." << endl;
