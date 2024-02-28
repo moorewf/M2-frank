@@ -37,6 +37,7 @@ class ARingQQFlint : public SimpleARing<ARingQQFlint>
 
   typedef fmpq ElementType;
   typedef ElementType elem;
+  typedef std::vector<elem> ElementContainerType;
 
   ARingQQFlint();
   ~ARingQQFlint();

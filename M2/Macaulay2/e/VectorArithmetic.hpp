@@ -564,6 +564,22 @@ inline void ConcreteVectorArithmetic<M2::ARingQQGMP>::from_ring_elem(ElementArra
   
 }
 
+template<>
+inline void ConcreteVectorArithmetic<M2::ARingQQFlint>::from_ring_elem(ElementArray& coeffs,
+                                                                     ring_elem numer,
+                                                                     ring_elem denom) const
+{
+  // TODO: this function ignores denom, this is non-intuitive and bug-prone.
+    // TODO: this will fail: input is alas ZZ integers... not QQ elements...
+    auto& svec = * elementArray(coeffs);
+    //ring_elem val = numer;
+    FieldElement inumer;
+    //FieldElement idenom;
+    mRing->init(inumer);
+    mRing->from_ring_elem(inumer, numer);
+    svec.emplace_back(inumer);
+}
+
 // `overloaded` construct (not standard until C++20)
 //template<class... Ts> 
 //struct overloaded : Ts... { using Ts::operator()...; };
@@ -578,6 +594,7 @@ class VectorArithmetic
                                 ConcreteVectorArithmetic<M2::ARingGFFlintBig>*,
                                 ConcreteVectorArithmetic<M2::ARingGFFlint>*,
                                 ConcreteVectorArithmetic<M2::ARingQQGMP>*,
+                                ConcreteVectorArithmetic<M2::ARingQQFlint>*,
                                 ConcreteVectorArithmetic<M2::ARingZZpFFPACK>*,
                                 ConcreteVectorArithmetic<M2::ARingZZp>*,
                                 ConcreteVectorArithmetic<M2::ARingGFM2>*,
@@ -611,6 +628,10 @@ public:
       case M2::ring_QQ:
         mConcreteVector = new ConcreteVectorArithmetic
           {R, &dynamic_cast< const M2::ConcreteRing<M2::ARingQQGMP>* >(R)->ring()};
+	break;
+      case M2::ring_QQFlint:
+        mConcreteVector = new ConcreteVectorArithmetic
+          {R, &dynamic_cast< const M2::ConcreteRing<M2::ARingQQFlint>* >(R)->ring()};
 	break;
       case M2::ring_ZZpFfpack:
         mConcreteVector = new ConcreteVectorArithmetic
