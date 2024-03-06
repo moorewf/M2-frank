@@ -2,6 +2,7 @@
 
 #include "aring-qq-flint.hpp"
 #include "ringmap.hpp"
+#include <flint/fmpz.h>
 
 #include <iostream>
 namespace M2 {

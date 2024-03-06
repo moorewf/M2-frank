@@ -4,6 +4,7 @@
 #define _aring_QQ_flint_hpp_
 
 #include "interface/gmp-util.h"  // for mpz_reallocate_limbs
+#include <iostream>
 
 // The following needs to be included before any flint files are included.
 #include <M2/gc-include.h>
@@ -59,11 +60,14 @@ class ARingQQFlint : public SimpleARing<ARingQQFlint>
 
   bool is_pm_one(const ElementType& f) const
   {
-    return fmpq_is_one(&f) or ((fmpz_cmp_si(fmpq_numref(&f), -1) == 0) and
-                               fmpz_is_one(fmpq_denref(&f)));
+    return fmpq_is_pm1(&f);
+    // return fmpq_is_one(&f) or ((fmpz_cmp_si(fmpq_numref(&f), -1) == 0) and
+    //                            fmpz_is_one(fmpq_denref(&f)));
   }
   bool is_unit(const ElementType& f) const { return not is_zero(f); }
-  bool is_zero(const ElementType& f) const { return fmpq_is_zero(&f); }
+  bool is_zero(const ElementType& f) const {
+    return fmpq_is_zero(&f) != 0;
+  }
   /** @} */
 
   /** @name operators
@@ -71,7 +75,8 @@ class ARingQQFlint : public SimpleARing<ARingQQFlint>
 
   bool is_equal(const ElementType& f, const ElementType& g) const
   {
-    return fmpq_equal(&f, &g);
+    bool res = fmpq_equal(&f, &g) != 0;
+    return res;
   }
   int compare_elems(const ElementType& f, const ElementType& g) const
   {
@@ -109,6 +114,7 @@ class ARingQQFlint : public SimpleARing<ARingQQFlint>
     // printf("ARingQQFlint::calling set_from_mpz\n");
     fmpz_set_mpz(fmpq_numref(&result), a);
     fmpz_one(fmpq_denref(&result));
+    //    fmpq_canonicalise(&result);
   }
 
   bool set_from_mpq(ElementType& result, mpq_srcptr a) const
@@ -242,13 +248,33 @@ class ARingQQFlint : public SimpleARing<ARingQQFlint>
    */
   const ElementType from_ring_elem_const(const ring_elem& a) const
   {
+    // TODO: the following will leak large integers.
+#if 0    
+    ElementType result;
+    init(result);
+    fmpq_set_mpq(&result, a.get_mpq());
+    return result;
+#else    
     mpq_srcptr a1 = a.get_mpq();
     fmpq result;
-    result.num = PTR_TO_COEFF(mpq_numref(a1));
-    result.den = PTR_TO_COEFF(mpq_denref(a1));
+    fmpz_init_set_readonly(&result.num, mpq_numref(a1));
+    fmpz_init_set_readonly(&result.den, mpq_denref(a1));
     return result;
+
+#endif    
   }
 
+  void from_ring_elem_const_clear(ElementType a) const
+  {
+#if 0    
+    fmpz_clear(fmpq_numref(&a));
+    fmpz_clear(fmpq_denref(&a));
+#endif    
+    // or we use
+    fmpz_clear_readonly(fmpq_numref(&a));
+    fmpz_clear_readonly(fmpq_denref(&a));
+  }
+  
   /** @} */
 
   bool promote(const Ring* Rf, const ring_elem f, ElementType& result) const

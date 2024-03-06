@@ -203,7 +203,7 @@ class ARingZZGMP : public SimpleARing<ARingZZGMP>
   /** @name IO
       @{
   */
-  void text_out(buffer& o) const { o << "ZZFlint"; }
+  void text_out(buffer& o) const { o << "ZZGMP"; }
   void elem_text_out(buffer& o,
                      const ElementType& a,
                      bool p_one = true,
