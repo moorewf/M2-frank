@@ -200,6 +200,8 @@ class CoefficientRingR
     }
   };
 
+  using ReadOnlyElement = Element;
+
   class ElementArray : public our_new_delete
   {
     ElementType *mData;

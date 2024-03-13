@@ -329,7 +329,7 @@ class MutableMat : public MutableMatrix
   {
     size_t nrows = n_rows();
     if (error_row_bound(i, nrows)) return false;
-    const ElementType& b = mat.ring().from_ring_elem_const(r);
+    ReadOnlyElement b(mat.ring(), r);
     MatOps::scale_row(mat, i, b);
     return true;
   }
@@ -339,7 +339,7 @@ class MutableMat : public MutableMatrix
   {
     size_t ncols = n_cols();
     if (error_column_bound(i, ncols)) return false;
-    const ElementType& b = mat.ring().from_ring_elem_const(r);
+    ReadOnlyElement b(mat.ring(), r);
     MatOps::scale_column(mat, i, b);
     return true;
   }
@@ -349,7 +349,7 @@ class MutableMat : public MutableMatrix
   {
     size_t nrows = n_rows();
     if (error_row_bound(i, nrows)) return false;
-    const ElementType& b = mat.ring().from_ring_elem_const(r);
+    ReadOnlyElement b(mat.ring(), r);
     MatOps::divide_row(mat, i, b);
     return true;
   }
@@ -359,7 +359,7 @@ class MutableMat : public MutableMatrix
   {
     size_t ncols = n_cols();
     if (error_column_bound(i, ncols)) return false;
-    const ElementType& b = mat.ring().from_ring_elem_const(r);
+    ReadOnlyElement b(mat.ring(), r);
     MatOps::divide_column(mat, i, b);
     return true;
   }
@@ -370,7 +370,7 @@ class MutableMat : public MutableMatrix
     size_t nrows = n_rows();
     if (error_row_bound(i, nrows) || error_row_bound(j, nrows)) return false;
     if (i == j) return true;
-    const ElementType& b = mat.ring().from_ring_elem_const(r);
+    ReadOnlyElement b(mat.ring(), r);
     MatOps::row_op(mat, i, b, j);
     return true;
   }
@@ -382,7 +382,7 @@ class MutableMat : public MutableMatrix
     if (error_column_bound(i, ncols) || error_column_bound(j, ncols))
       return false;
     if (i == j) return true;
-    const ElementType& b = mat.ring().from_ring_elem_const(r);
+    ReadOnlyElement b(mat.ring(), r);
     MatOps::column_op(mat, i, b, j);
     return true;
   }
@@ -401,10 +401,10 @@ class MutableMat : public MutableMatrix
     if (error_column_bound(c1, ncols) || error_column_bound(c2, ncols))
       return false;
     if (c1 == c2) return true;
-    const ElementType& aa1 = mat.ring().from_ring_elem_const(a1);
-    const ElementType& aa2 = mat.ring().from_ring_elem_const(a2);
-    const ElementType& bb1 = mat.ring().from_ring_elem_const(b1);
-    const ElementType& bb2 = mat.ring().from_ring_elem_const(b2);
+    ReadOnlyElement aa1(mat.ring(), a1);
+    ReadOnlyElement aa2(mat.ring(), a2);
+    ReadOnlyElement bb1(mat.ring(), b1);
+    ReadOnlyElement bb2(mat.ring(), b2);
     MatOps::column2by2(mat, c1, c2, aa1, aa2, bb1, bb2);
     return true;
   }
@@ -422,10 +422,10 @@ class MutableMat : public MutableMatrix
     size_t nrows = n_rows();
     if (error_row_bound(r1, nrows) || error_row_bound(r2, nrows)) return false;
     if (r1 == r2) return true;
-    const ElementType& aa1 = mat.ring().from_ring_elem_const(a1);
-    const ElementType& aa2 = mat.ring().from_ring_elem_const(a2);
-    const ElementType& bb1 = mat.ring().from_ring_elem_const(b1);
-    const ElementType& bb2 = mat.ring().from_ring_elem_const(b2);
+    ReadOnlyElement aa1(mat.ring(), a1);
+    ReadOnlyElement aa2(mat.ring(), a2);
+    ReadOnlyElement bb1(mat.ring(), b1);
+    ReadOnlyElement bb2(mat.ring(), b2);
     MatOps::row2by2(mat, r1, r2, aa1, aa2, bb1, bb2);
     return true;
   }
@@ -627,7 +627,7 @@ class MutableMat : public MutableMatrix
         ERROR("expected same ring");
         return 0;
       }
-    const ElementType& a = mat.ring().from_ring_elem_const(f->get_value());
+    ReadOnlyElement a(mat.ring(), f->get_value());
 
     MutableMat* result = clone();
     MatrixOps::scalarMultInPlace(result->mat, a);
