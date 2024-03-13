@@ -128,6 +128,11 @@ class ARingZZpFFPACK : public SimpleARing<ARingZZpFFPACK>
     return a.get_int();
   }
 
+  void from_ring_elem_const_clear(ElementType a) const
+  {
+    // nothing needed to do
+  }
+  
   /** @} */
 
   /** @name operators

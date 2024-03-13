@@ -234,6 +234,11 @@ class ARingZZGMP : public SimpleARing<ARingZZGMP>
     return *a.get_mpz();
   }
 
+  void from_ring_elem_const_clear(ElementType a) const
+  {
+    // nothing needed to do
+  }
+  
   /** @} */
 
   bool promote(const Ring* Rf, const ring_elem f, ElementType& result) const

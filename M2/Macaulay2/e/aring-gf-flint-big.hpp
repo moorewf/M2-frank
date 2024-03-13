@@ -48,6 +48,7 @@ class ARingGFFlintBig : public RingInterface
   
   typedef ElementType elem;
   typedef std::vector<elem> ElementContainerType;
+  using ReadOnlyElement = ReadOnlyElementTempl<ARingGFFlintBig>;
 
   /**
    * \brief A wrapper class for ElementType
@@ -166,6 +167,11 @@ class ARingGFFlintBig : public RingInterface
     return *reinterpret_cast<ElementType*>(a.poly_val);
   }
 
+  void from_ring_elem_const_clear(ElementType a) const
+  {
+    // nothing needed to do
+  }
+  
   bool is_unit(const ElementType& f) const { return not is_zero(f); }
   bool is_zero(const ElementType& f) const
   {

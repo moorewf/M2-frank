@@ -31,6 +31,7 @@ class ConcreteRing : public Ring
   ConcreteRing(const ConcreteRing &ring) = delete;
   typedef typename RingType::ElementType ElementType;
   typedef typename RingType::Element Element;
+  using ReadOnlyElement = typename RingType::ReadOnlyElement;
 
   static ConcreteRing<RingType> *create(std::unique_ptr<RingType> R);
 
@@ -86,7 +87,7 @@ class ConcreteRing : public Ring
   ////////////////////////////
   virtual unsigned int computeHashValue(ring_elem a) const
   {
-    const ElementType &b = ring().from_ring_elem_const(a);
+    ReadOnlyElement b(ring(), a);
     return ring().computeHashValue(b);
   }
 
@@ -210,42 +211,33 @@ class ConcreteRing : public Ring
 
   virtual bool is_unit(const ring_elem f) const
   {
-    if (displayArithmeticCalls) fprintf(stderr, "calling is_unit\n");
-    const ElementType &a = R->from_ring_elem_const(f);
-    bool ret = R->is_unit(a);
-    return ret;
+    ReadOnlyElement a(*R, f);
+    return R->is_unit(a);
   }
 
   virtual bool is_zero(const ring_elem f) const
   {
-    if (displayArithmeticCalls) fprintf(stderr, "calling is_zero\n");
-    const ElementType &a = R->from_ring_elem_const(f);
-    bool ret = R->is_zero(a);
-    return ret;
+    ReadOnlyElement a(*R, f);
+    return R->is_zero(a);
   }
 
   virtual bool is_equal(const ring_elem f, const ring_elem g) const
   {
-    if (displayArithmeticCalls) fprintf(stderr, "calling is_equal\n");
-    const ElementType &a = R->from_ring_elem_const(f);
-    const ElementType &b = R->from_ring_elem_const(g);
-    bool ret = R->is_equal(a, b);
-    return ret;
+    ReadOnlyElement a(*R, f);
+    ReadOnlyElement b(*R, g);
+    return R->is_equal(a, b);
   }
 
   virtual int compare_elems(const ring_elem f, const ring_elem g) const
   {
-    if (displayArithmeticCalls) fprintf(stderr, "calling compare_elems\n");
-    const ElementType &a = R->from_ring_elem_const(f);
-    const ElementType &b = R->from_ring_elem_const(g);
-    int ret = R->compare_elems(a, b);
-    return ret;
+    ReadOnlyElement a(*R, f);
+    ReadOnlyElement b(*R, g);
+    return R->compare_elems(a, b);
   }
 
   virtual ring_elem copy(const ring_elem f) const
   {
-    if (displayArithmeticCalls) fprintf(stderr, "calling copy\n");
-    const ElementType &a = R->from_ring_elem_const(f);
+    ReadOnlyElement a(*R, f);
     Element b(*R);
     ring_elem result;
     R->set(b, a);
@@ -255,14 +247,12 @@ class ConcreteRing : public Ring
 
   virtual void remove(ring_elem &f) const
   {
-    if (displayArithmeticCalls) fprintf(stderr, "calling remove\n");
     /* currently, do nothing... */
   }
 
   virtual ring_elem negate(const ring_elem f) const
   {
-    if (displayArithmeticCalls) fprintf(stderr, "calling negate\n");
-    const ElementType &a = R->from_ring_elem_const(f);
+    ReadOnlyElement a(*R, f);
     Element b(*R);
     ring_elem result;
     R->negate(b, a);
@@ -272,9 +262,8 @@ class ConcreteRing : public Ring
 
   virtual ring_elem add(const ring_elem f, const ring_elem g) const
   {
-    if (displayArithmeticCalls) fprintf(stderr, "calling add\n");
-    const ElementType &a = R->from_ring_elem_const(f);
-    const ElementType &b = R->from_ring_elem_const(g);
+    ReadOnlyElement a(*R, f);
+    ReadOnlyElement b(*R, g);
     Element c(*R);
     ring_elem result;
     R->add(c, a, b);
@@ -284,9 +273,8 @@ class ConcreteRing : public Ring
 
   virtual ring_elem subtract(const ring_elem f, const ring_elem g) const
   {
-    if (displayArithmeticCalls) fprintf(stderr, "calling subtract\n");
-    const ElementType &a = R->from_ring_elem_const(f);
-    const ElementType &b = R->from_ring_elem_const(g);
+    ReadOnlyElement a(*R, f);
+    ReadOnlyElement b(*R, g);
     Element c(*R);
     ring_elem result;
     R->subtract(c, a, b);
@@ -296,20 +284,18 @@ class ConcreteRing : public Ring
 
   virtual ring_elem mult(const ring_elem f, const ring_elem g) const
   {
-    if (displayArithmeticCalls) fprintf(stderr, "calling mult\n");
-    const ElementType &a = R->from_ring_elem_const(f);
-    const ElementType &b = R->from_ring_elem_const(g);
+    ReadOnlyElement a(*R, f);
+    ReadOnlyElement b(*R, g);
     Element c(*R);
     ring_elem result;
-    R->mult(c, a, b);
+    R->mult(c, a, b);    
     R->to_ring_elem(result, c);
     return result;
   }
 
   virtual ring_elem power(const ring_elem f, mpz_srcptr n) const
   {
-    if (displayArithmeticCalls) fprintf(stderr, "calling power mpz\n");
-    const ElementType &a = R->from_ring_elem_const(f);
+    ReadOnlyElement a(*R, f);
     Element b(*R);
     ring_elem result;
     R->power_mpz(b, a, n);
@@ -319,8 +305,7 @@ class ConcreteRing : public Ring
 
   virtual ring_elem power(const ring_elem f, int n) const
   {
-    if (displayArithmeticCalls) fprintf(stderr, "calling power int\n");
-    const ElementType &a = R->from_ring_elem_const(f);
+    ReadOnlyElement a(*R, f);
     Element b(*R);
     ring_elem result;
     R->power(b, a, n);
@@ -330,8 +315,7 @@ class ConcreteRing : public Ring
 
   virtual ring_elem invert(const ring_elem f) const
   {
-    if (displayArithmeticCalls) fprintf(stderr, "calling invert\n");
-    const ElementType &a = R->from_ring_elem_const(f);
+    ReadOnlyElement a(*R, f);
     Element b(*R);
     ring_elem result;
     R->invert(b, a);
@@ -341,12 +325,11 @@ class ConcreteRing : public Ring
 
   virtual ring_elem divide(const ring_elem f, const ring_elem g) const
   {
-    if (displayArithmeticCalls) fprintf(stderr, "calling divide\n");
-    const ElementType &a = R->from_ring_elem_const(f);
-    const ElementType &b = R->from_ring_elem_const(g);
+    ReadOnlyElement a(*R, f);
+    ReadOnlyElement b(*R, g);
     Element c(*R);
     ring_elem result;
-    R->divide(c, a, b);
+    R->divide(c, a, b);    
     R->to_ring_elem(result, c);
     return result;
   }
@@ -356,9 +339,8 @@ class ConcreteRing : public Ring
                       ring_elem &x,
                       ring_elem &y) const
   {
-    if (displayArithmeticCalls) fprintf(stderr, "calling syzygy\n");
-    const ElementType &a = R->from_ring_elem_const(f);
-    const ElementType &b = R->from_ring_elem_const(g);
+    ReadOnlyElement a(*R, f);
+    ReadOnlyElement b(*R, g);
     Element xe(*R), ye(*R);
     R->syzygy(a, b, xe, ye);
     R->to_ring_elem(x, xe);
@@ -367,7 +349,6 @@ class ConcreteRing : public Ring
 
   virtual ring_elem random() const
   {
-    if (displayArithmeticCalls) fprintf(stderr, "calling random\n");
     ring_elem result;
     Element a(*R);
     R->random(a);
@@ -381,8 +362,7 @@ class ConcreteRing : public Ring
                              bool p_plus = false,
                              bool p_parens = false) const
   {
-    if (displayArithmeticCalls) fprintf(stderr, "calling elem_text_out\n");
-    const ElementType &a = R->from_ring_elem_const(f);
+    ReadOnlyElement a(*R, f);
     R->elem_text_out(o, a, p_one, p_plus, p_parens);
   }
 
@@ -1029,8 +1009,8 @@ template <>
 inline void ConcreteRing<ARingRR>::increase_maxnorm(gmp_RRmutable norm,
                                                     const ring_elem f) const
 {
+  ReadOnlyElement b(*R, f);
   ARingRR::Element a(*R);  // will be the norm
-  const ElementType &b = R->from_ring_elem_const(f);
   R->abs(a, b);
   if (mpfr_cmp_d(norm, a) < 0) mpfr_set_d(norm, a, MPFR_RNDN);
 }
@@ -1041,7 +1021,7 @@ inline void ConcreteRing<ARingCC>::increase_maxnorm(gmp_RRmutable norm,
 {
   const ARingRR &realR = R->real_ring();
   ARingRR::Element a(realR);
-  const ElementType &b = R->from_ring_elem_const(f);
+  ReadOnlyElement b(*R, f);
   R->abs(a, b);
   if (mpfr_cmp_d(norm, a) < 0) mpfr_set_d(norm, a, MPFR_RNDN);
 }
@@ -1051,7 +1031,7 @@ inline void ConcreteRing<ARingRRR>::increase_maxnorm(gmp_RRmutable norm,
                                                      const ring_elem f) const
 {
   ARingRRR::Element a(*R);  // will be the norm
-  const ElementType &b = R->from_ring_elem_const(f);
+  ReadOnlyElement b(*R, f);
   R->abs(a, b);
   if (mpfr_cmp(&a.value(), norm) > 0) mpfr_set(norm, &a.value(), MPFR_RNDN);
 }
@@ -1062,7 +1042,7 @@ inline void ConcreteRing<ARingCCC>::increase_maxnorm(gmp_RRmutable norm,
 {
   const ARingRRR &realR = R->real_ring();
   ARingRRR::Element a(realR);
-  const ElementType &b = R->from_ring_elem_const(f);
+  ReadOnlyElement b(*R, f);
   R->abs(a, b);
   if (mpfr_cmp(&a.value(), norm) > 0) mpfr_set(norm, &a.value(), MPFR_RNDN);
 }
@@ -1106,7 +1086,7 @@ inline unsigned long ConcreteRing<ARingCCC>::get_precision() const
 template <typename RT>
 std::pair<bool, long> coerceToLongIntegerFcn(const RT &ring, ring_elem a)
 {
-  const typename RT::ElementType &b = ring.from_ring_elem_const(a);
+  typename RT::ReadOnlyElement b(ring, a);
   long result = ring.coerceToLongInteger(b);
   return std::pair<bool, long>(true, result);
 }
@@ -1245,7 +1225,7 @@ inline const RingElement *ConcreteRing<ARingGFFlintBig>::getGenerator() const
 template <>
 inline long ConcreteRing<ARingZZpFlint>::discreteLog(const ring_elem &a1) const
 {
-  const ElementType &a = ring().from_ring_elem_const(a1);
+  typename ARingZZpFlint::ReadOnlyElement a(ring(), a1);
   long result = ring().discreteLog(a);
   return result;
 }

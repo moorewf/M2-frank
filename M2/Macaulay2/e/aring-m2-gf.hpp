@@ -139,6 +139,11 @@ class ARingGFM2 : public SimpleARing<ARingGFM2>
     return a.get_int();
   }
 
+  void from_ring_elem_const_clear(ElementType a) const
+  {
+    // nothing needed to do
+  }
+  
   bool is_unit(ElementType f) const { return f != 0; }
   bool is_zero(ElementType f) const { return f == 0; }
   bool is_equal(ElementType f, ElementType g) const { return f == g; }

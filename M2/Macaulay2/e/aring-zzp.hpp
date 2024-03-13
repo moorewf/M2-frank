@@ -106,6 +106,11 @@ class ARingZZp : public SimpleARing<ARingZZp>
       return a.get_int();
   }
 
+  void from_ring_elem_const_clear(ElementType a) const
+  {
+    // nothing needed to do
+  }
+  
   // 'init', 'init_set' functions
 
   void init(elem &result) const { result = 0; }

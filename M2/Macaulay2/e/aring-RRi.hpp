@@ -95,6 +95,12 @@ class ARingRRi : public SimpleARing<ARingRRi>
   {
     return *a.get_mpfi();
   }
+
+  void from_ring_elem_const_clear(ElementType a) const
+  {
+    // nothing needed to do
+  }
+
   // 'init', 'init_set' functions
 
   void init(ElementType &result) const { mpfi_init2(&result, mPrecision); }

@@ -47,6 +47,8 @@ class ARingTower : public RingInterface
 
   static const RingID ringID = ring_tower_ZZp;
   typedef ARingPolynomial ElementType;
+  using ReadOnlyElement = ReadOnlyElementTempl<ARingTower>;
+
   /**
    * \brief A wrapper class for ElementType
    *
@@ -179,6 +181,11 @@ class ARingTower : public RingInterface
   ElementType from_ring_elem_const(const ring_elem &a) const
   {
     return reinterpret_cast<ElementType>(a.poly_val);
+  }
+
+  void from_ring_elem_const_clear(ElementType a) const
+  {
+    // nothing needed to do
   }
 
   // 'init', 'init_set' functions

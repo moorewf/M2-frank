@@ -168,6 +168,7 @@ class MutableMat : public MutableMatrix
   typedef typename CoeffRing::elem elem;
   typedef typename CoeffRing::Element Element;
   typedef typename CoeffRing::ElementType ElementType;
+  using ReadOnlyElement = typename CoeffRing::ReadOnlyElement;
 
   typedef MatElementaryOps<Mat> MatOps;
 
@@ -293,7 +294,7 @@ class MutableMat : public MutableMatrix
   {
     if (error_row_bound(r, n_rows())) return false;
     if (error_column_bound(c, n_cols())) return false;
-    const ElementType& b = mat.ring().from_ring_elem_const(a);
+    ReadOnlyElement b(mat.ring(), a);
     MatOps::setEntry(mat, r, c, b);
     return true;
   }

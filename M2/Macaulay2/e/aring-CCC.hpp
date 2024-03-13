@@ -97,6 +97,11 @@ class ARingCCC : public SimpleARing<ARingCCC>
     return *a.get_cc();
   }
 
+  void from_ring_elem_const_clear(ElementType a) const
+  {
+    // nothing needed to do
+  }
+
   // 'init', 'init_set' functions
 
   void init(ElementType& result) const

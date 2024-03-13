@@ -39,6 +39,7 @@ class ARingGFFlint : public RingInterface
   typedef fq_zech_struct ElementType;
   typedef ElementType elem;
   typedef std::vector<elem> ElementContainerType;
+  using ReadOnlyElement = ReadOnlyElementTempl<ARingGFFlint>;
 
   /**
    * \brief A wrapper class for ElementType
@@ -144,6 +145,11 @@ class ARingGFFlint : public RingInterface
   ElementType from_ring_elem_const(const ring_elem& a) const
   {
     return {.value = static_cast<mp_limb_t>(a.get_int())};
+  }
+
+  void from_ring_elem_const_clear(ElementType a) const
+  {
+    // nothing needed to do
   }
 
   bool is_unit(const ElementType& f) const { return not is_zero(f); }

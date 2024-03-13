@@ -80,6 +80,23 @@ class ElementImpl
   ElementType &value() { return mValue; }
 };
 
+  // This type is meant to be used with READ ONLY aring elements
+template <typename ARing>
+class ReadOnlyElementTempl : public ElementImpl<typename ARing::ElementType>
+{
+  typedef typename ARing::ElementType ElementType;
+  typedef ElementImpl<ElementType> Impl;
+  const ARing& mRing;
+public:
+  explicit ReadOnlyElementTempl(const ARing &ring, ring_elem f) : mRing(ring)
+  {
+    // without the Impl::, the compiler can't figure out where mValue comes
+    // from
+    Impl::mValue = ring.from_ring_elem_const(f);
+  }
+  ~ReadOnlyElementTempl() { mRing.from_ring_elem_const_clear(Impl::mValue); }
+};
+  
 /**
  * \ingroup rings
  *
@@ -114,6 +131,25 @@ class SimpleARing : public RingInterface
     }
     ~Element() { ARing::clear(Impl::mValue); }
   };
+  /**
+   * \brief A wrapper class for ElementType's taken from a ring_elem
+   */
+  using ReadOnlyElement = ReadOnlyElementTempl<ARing>;
+  
+  // class ReadOnlyElement : public ElementImpl<typename ARing::ElementType>
+  // {
+  //   typedef typename ARing::ElementType ElementType;
+  //   typedef ElementImpl<ElementType> Impl;
+  //   const ARing& mRing;
+  //  public:
+  //   explicit ReadOnlyElement(const ARing &ring, ring_elem f) : mRing(ring)
+  //   {
+  //     // without the Impl::, the compiler can't figure out where mValue comes
+  //     // from
+  //     Impl::mValue = ring.from_ring_elem_const(f);
+  //   }
+  //   ~ReadOnlyElement() { mRing.from_ring_elem_const_clear(Impl::mValue); }
+  // };
   /**
    * \brief A wrapper for an array of ElementType
    *

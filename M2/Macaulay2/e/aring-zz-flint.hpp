@@ -236,9 +236,16 @@ void set_from_mpz(ElementType& result, mpz_srcptr a) const
 
   ElementType from_ring_elem_const(const ring_elem& a) const
   {
+    // warning "aring-zz-flint from_ring_elem_const rewrite"
     return PTR_TO_COEFF(a.get_mpz());
   }
 
+  void from_ring_elem_const_clear(ElementType a) const
+  {
+    //warning "aring-zz-flint const_clear rewrite"
+    // TODO: add in code
+  }
+  
   /** @} */
 
   bool promote(const Ring* Rf, const ring_elem f, ElementType& result) const

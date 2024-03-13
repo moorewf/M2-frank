@@ -266,6 +266,11 @@ class ARingQQGMP : public SimpleARing<ARingQQGMP>
     return *a.get_mpq();
   }
 
+  void from_ring_elem_const_clear(ElementType a) const
+  {
+    // nothing needed to do
+  }
+  
 /** @} */
 
 #if 0    

@@ -269,6 +269,11 @@ class ARingZZpFlint : public SimpleARing<ARingZZpFlint>
     return static_cast<mp_limb_t>(a.get_long());
   }
 
+  void from_ring_elem_const_clear(ElementType a) const
+  {
+    // nothing needed to do
+  }
+  
  private:
   nmod_t mModulus;
   size_t mCharac;  // not needed, as it is in mModulus

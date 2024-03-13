@@ -180,6 +180,11 @@ class ARingGFGivaro : public SimpleARing<ARingGFGivaro>
     return a.get_int();
   }
 
+  void from_ring_elem_const_clear(ElementType a) const
+  {
+    // nothing needed to do
+  }
+  
   /** @} */
 
   /** @name operators

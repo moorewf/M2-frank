@@ -77,6 +77,11 @@ class ARingRR : public SimpleARing<ARingRR>
     return a.get_double();
   }
 
+  void from_ring_elem_const_clear(ElementType a) const
+  {
+    // nothing needed to do
+  }
+  
   // 'init', 'init_set' functions
 
   void init(ElementType &result) const { result = 0.0; }

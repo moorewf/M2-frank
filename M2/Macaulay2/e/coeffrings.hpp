@@ -251,6 +251,11 @@ class CoefficientRingR
   // do not make the return type here a reference, otherwise dangling refrences
   // become very easy to make
   elem from_ring_elem_const(const ring_elem &a) const { return a; }
+  void from_ring_elem_const_clear(ElementType a) const
+  {
+    // nothing needed to do
+  }
+
   void swap(elem &a, elem &b) const
   {
     elem tmp = a;
