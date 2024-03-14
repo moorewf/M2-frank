@@ -46,10 +46,6 @@ PolyRingQuotient::~PolyRingQuotient() {}
 //      }
 //     }
 //
-//   result->zeroV = result->from_int(0);
-//   result->oneV = result->from_int(1);
-//   result->minus_oneV = result->from_int(-1);
-//
 //   return result;
 // }
 //

@@ -73,7 +73,7 @@ void PolynomialRing::initialize_PolynomialRing(const Ring *K,
   poly_size_ = 0;  // The callee needs to set this later
   gb_ring_ = nullptr;    // The callee needs to set this later
 
-  // Also: callee should call setIsGraded, and set oneV, minus_oneV, zeroV
+  // Also: callee should call setIsGraded
 }
 
 PolynomialRing *PolynomialRing::create_quotient(const PolynomialRing *R,
@@ -123,10 +123,6 @@ PolynomialRing *PolynomialRing::create_quotient(const PolynomialRing *R,
 
   result->gb_ring_ = R->get_gb_ring();
   result->setQuotientInfo(qrinfo);  // Also sets graded-ness
-
-  result->zeroV = result->from_long(0);
-  result->oneV = result->from_long(1);
-  result->minus_oneV = result->from_long(-1);
 
   return result;
 }

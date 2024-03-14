@@ -89,10 +89,6 @@ class Ring : public MutableEngineObject
                  //    a non-zero non-unit.
                  // If a non unit is found, then _isfield is set to -1.
 
-  ring_elem zeroV;  // Three generally useful values in a ring.
-  ring_elem oneV;
-  ring_elem minus_oneV;
-
   void initialize_ring(long charac,
                        const PolynomialRing *DR = nullptr,
                        const std::vector<int> &heft_vec = {});
@@ -103,10 +99,7 @@ class Ring : public MutableEngineObject
         AR(nullptr),
         cR(nullptr),
         _non_unit(),
-        _isfield(0),
-        zeroV(),
-        oneV(),
-        minus_oneV()
+        _isfield(0)
   {
   }
 
@@ -312,9 +305,9 @@ class Ring : public MutableEngineObject
 
   virtual std::pair<bool, long> coerceToLongInteger(ring_elem a) const;
 
-  ring_elem one() const { return oneV; }
-  ring_elem minus_one() const { return minus_oneV; }
-  ring_elem zero() const { return zeroV; }
+  ring_elem one() const { return from_long(1); }
+  ring_elem minus_one() const { return from_long(-1); }
+  ring_elem zero() const { return from_long(0); }
   virtual ring_elem from_long(long n) const = 0;
   virtual ring_elem from_int(mpz_srcptr n) const = 0;
 

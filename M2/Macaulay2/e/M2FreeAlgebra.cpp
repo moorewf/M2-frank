@@ -51,9 +51,6 @@ M2FreeAlgebra* M2FreeAlgebra::create(const Ring* K,
   auto F = std::unique_ptr<FreeAlgebra>(FreeAlgebra::create(K, names, degreeRing, degrees, wtvecs, heftVector));
   M2FreeAlgebra* result = new M2FreeAlgebra(std::move(F));
   result->initialize_ring(K->characteristic(), degreeRing, heftVector);
-  result->zeroV = result->from_long(0);
-  result->oneV = result->from_long(1);
-  result->minus_oneV = result->from_long(-1);
 
   return result;
 }

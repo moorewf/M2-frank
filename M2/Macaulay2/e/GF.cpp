@@ -115,10 +115,6 @@ bool GF::initialize_GF(const RingElement *prim)
       a = _one_table[a];
     }
 
-  zeroV = from_long(0);
-  oneV = from_long(1);
-  minus_oneV = from_long(-1);
-
   return true;
 }
 

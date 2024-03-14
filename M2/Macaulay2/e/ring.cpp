@@ -12,8 +12,7 @@
 const Monoid *Ring::degree_monoid() const { return degree_ring->getMonoid(); }
 #if 1
 RingZZ *makeIntegerRing() { return new RingZZ; }
-#endif
-#if 0
+#else
 ARingZZ* makeIntegerRing()
 {
   return new M2::ConcreteRing<M2::ARingZZ>;
@@ -42,10 +41,6 @@ void Ring::initialize_ring(long P0,
 
   _non_unit = ZERO_RINGELEM;
   _isfield = 0;
-
-  zeroV = ZERO_RINGELEM;
-  oneV = ZERO_RINGELEM;
-  minus_oneV = ZERO_RINGELEM;
 }
 
 Ring::~Ring() {}
@@ -95,7 +90,7 @@ void Ring::set_non_unit(ring_elem non_unit) const
 ring_elem Ring::var(int v) const
 {
   // The default behavior is to just return 0.
-  return zeroV;
+  return from_long(0);
 }
 
 /// @brief Exponentiation. This is the default function, if a class doesn't

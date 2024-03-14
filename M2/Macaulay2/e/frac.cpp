@@ -31,10 +31,6 @@ bool FractionField::initialize_frac(const PolyRingFlat *R)
 
   R_ = R;
 
-  zeroV = from_long(0);
-  oneV = from_long(1);
-  minus_oneV = from_long(-1);
-
   if (R->n_quotients() > 0 ||
       R->getCoefficients()
           ->cast_to_FractionField()  // disallowed in x-relem.cpp

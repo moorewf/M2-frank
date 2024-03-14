@@ -35,10 +35,7 @@ M2FreeAlgebraQuotient* M2FreeAlgebraQuotient::create(
   auto A = std::unique_ptr<FreeAlgebraQuotient> (new FreeAlgebraQuotient(F.freeAlgebra(), gbElements, maxdeg));
   M2FreeAlgebraQuotient* result = new M2FreeAlgebraQuotient(F, std::move(A));
   result->initialize_ring(F.coefficientRing()->characteristic(), F.degreeRing(), {});
-  result->zeroV = result->from_long(0);
-  result->oneV = result->from_long(1);
-  result->minus_oneV = result->from_long(-1);
-
+  
   return result;
 }
 

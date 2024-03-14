@@ -95,7 +95,6 @@ previous notes:
       
       the real problem: ring_elem's are treated as garbage collected, and pointers are freely copied.
       how to solve this?
-        one, zeroV, minusoneV: need to not return already constructed elements
         quotient elements: ? these are being used as is.
         poly functions: don't lose ring_elem constants, or have 2 that are the same.
         

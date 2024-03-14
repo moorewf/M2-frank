@@ -409,10 +409,6 @@ class RingQQ : public ConcreteRing<ARingQQ>
     result->initialize_ring(characteristic);
     result->declare_field();
 
-    result->zeroV = result->from_long(0);
-    result->oneV = result->from_long(1);
-    result->minus_oneV = result->from_long(-1);
-
     return result;
   }
 
@@ -497,10 +493,6 @@ ConcreteRing<RingType> *ConcreteRing<RingType>::create(
   ConcreteRing<RingType> *result = new ConcreteRing<RingType>(std::move(R));
   result->initialize_ring(characteristic);
   result->declare_field();
-
-  result->zeroV = result->from_long(0);
-  result->oneV = result->from_long(1);
-  result->minus_oneV = result->from_long(-1);
 
   return result;
 }
