@@ -37,6 +37,8 @@ const Ring /* or null */ *rawARingGaloisFieldFlintZech(
 /* same interface as rawGaloisField, but uses Flint GF code designed for
    wordsize p, and uses lookup tables */
 
+const Ring /* or null */ *rawNumberField(const RingElement *f);
+
 const Ring /* or null */ *rawARingGaloisField(int p, int n); /* connected */
 /* creates a ring GF(p^n).  Constraints on p, n? */
 /* returns null if the values p,n are too large  */

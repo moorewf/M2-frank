@@ -82,6 +82,7 @@ static const PolynomialRing * /* or null */ checkGaloisFieldInput(
     }
   return R;
 }
+
 const Ring /* or null */ *rawARingGaloisField1(const RingElement *f)
 {
   const PolynomialRing *R = checkGaloisFieldInput(f);
@@ -123,6 +124,51 @@ const Ring /* or null */ *rawARingGaloisFieldFlintZech(const RingElement *f)
   }
 }
 
+static const PolynomialRing * /* or null */ checkNumberFieldInput(
+    const RingElement *f)
+{
+  // Check that the ring R of f is a polynomial ring in one var over a ZZ/p
+  // Check that f is monic
+  // If any of these fail, then return 0.
+  const PolynomialRing *R = f->get_ring()->cast_to_PolynomialRing();
+  if (R == nullptr)
+    {
+      ERROR("expected ring of the form QQ[x]");
+      return nullptr;
+    }
+  if (R->n_vars() != 1)
+    {
+      ERROR("expected ring of the form QQ[x]");
+      return nullptr;
+    }
+  if (R->n_quotients() != 0)
+    {
+      ERROR("expected ring of the form QQ[x]");
+      return nullptr;
+    }
+  if (R->characteristic() != 0)
+    {
+      ERROR("expected ring of the form QQ[x]");
+      return nullptr;
+    }
+  return R;
+}
+
+const Ring /* or null */ *rawNumberField(const RingElement *f)
+{
+  const PolynomialRing *R = checkNumberFieldInput(f);
+  if (R == nullptr) return nullptr;  // error message has already been logged
+  try
+    {
+      // return M2::ConcreteRing<M2::ARingNumberField>::create(*R, f->get_value());
+      return globalZZ;
+  } catch (const exc::engine_error& e)
+    {
+      ERROR(e.what());
+      return nullptr;
+  }
+}
+
 /// @todo why parameters are ints and not longs or mpz's? is an overflow
 /// possible?
 /// @todo check prime for primality (probably at top of Macaulay2)
@@ -144,8 +190,6 @@ const Ring /* or null */ *rawARingGaloisField(int prime, int dimension)
     }
   try
     {
-#if 1
-
       if (prime <= 1)
         {
           ERROR("givaroGF/FFPACK: expected a prime number p ");
@@ -172,15 +216,10 @@ const Ring /* or null */ *rawARingGaloisField(int prime, int dimension)
           ERROR("maximum modulus = %f\n", M2::ARingZZpFFPACK::getMaxModulus());
           return nullptr;
         }
-      #if 0
-      return M2::ConcreteRing<M2::ARingGFGivaro>::create(prime, dimension);
-      #endif
       ERROR("calling rawARingGaloisField with no longer allowed values, givaro is no longer available");
       return nullptr;
-#else
       ERROR("add --enable-fflas-ffpack --enable-givaro when building M2");
       return 0;
-#endif
   } catch (const exc::engine_error& e)
     {
       ERROR(e.what());

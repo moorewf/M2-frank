@@ -38,6 +38,7 @@ struct Nterm;
 typedef Nterm *tpoly;
 class schur_poly;
 struct local_elem;
+struct number_field_elem;
 
 union ring_elem
 {
@@ -55,6 +56,7 @@ union ring_elem
   mpfi_srcptr mpfi_val;
   cc_doubles_srcptr cc_doubles_val;
   cc_srcptr cc_val;
+  const number_field_elem* mNFElem;
   const void *mPolyVal;
  public:
   ring_elem() : poly_val(nullptr) {}
@@ -72,6 +74,7 @@ union ring_elem
   explicit ring_elem(local_elem* a) : local_val(a) {}
   explicit ring_elem(const void* a) : mPolyVal(a) {} // non-commutative polynomials
   explicit ring_elem(schur_poly* a) : schur_poly_val(a) {}
+  explicit ring_elem(number_field_elem* a) : mNFElem(a) {}
 
   //  operator int() const { return int_val; }
   operator tpoly() const { return poly_val; }
@@ -89,6 +92,7 @@ union ring_elem
   cc_doubles_srcptr get_cc_doubles() const { return cc_doubles_val; }
   const local_elem* get_local_elem() const { return local_val; }
   const schur_poly* get_schur_poly() const { return schur_poly_val; }
+  const number_field_elem* get_number_field_elem() const { return mNFElem; }
 };
 
 /* Implements a linked list of ring monomials along with coefficients */

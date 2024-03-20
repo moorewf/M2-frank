@@ -32,6 +32,7 @@ enum RingID {
   ring_GFM2,
   ring_GFFlintBig,
   ring_GFFlintZech,
+  ring_NumberField,
   ring_RRi,
   ring_RR,
   ring_CC,

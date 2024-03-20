@@ -68,6 +68,11 @@ class ConcreteRing : public Ring
            ringID() == ring_GFFlintBig or ringID() == ring_GFFlintZech;
   }
 
+  bool isNumberField() const
+  {
+    return ringID() == ring_NumberField;
+  }
+
   /////////////////////////////////////////
   // Special functions for Galois Fields //
   /////////////////////////////////////////

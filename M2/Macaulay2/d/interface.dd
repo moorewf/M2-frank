@@ -705,6 +705,11 @@ setupfun("rawARingGaloisField", rawARingGaloisField);
 --      else WrongArg("a raw ring"));
 -- setupfun("rawARingGFPolynomial",rawARingGFPolynomial);
 
+export rawNumberField(e:Expr):Expr := (
+     when e is f:RawRingElementCell do toExpr(Ccode(RawRingOrNull,"rawNumberField(", f.p, ")"))
+     else WrongArg("a raw ring element"));
+setupfun("rawNumberField", rawNumberField);
+
 export rawMultiplicativeGenerator(e:Expr):Expr := (
      when e
      is R:RawRingCell do toExpr( Ccode(RawRingElementOrNull, "rawMultiplicativeGenerator(", R.p, ")" ) )

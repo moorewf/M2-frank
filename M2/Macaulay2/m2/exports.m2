@@ -968,6 +968,7 @@ export {
 	"numColumns",
 	"numRows",
 	"number",
+	"numberField",
 	"numerator",
 	"numeric",
     "numericInterval",
