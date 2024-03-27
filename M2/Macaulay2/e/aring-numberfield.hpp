@@ -76,16 +76,15 @@ fmpq_poly_struct toFlintQQPoly(QQPoly f)
 
 void fromFlintZZPoly(ZZPoly result, fmpz_poly_t f)
 {
+   // TODO
    result.resize(fmpz_poly_length(f));
 }
 
 void fromFlintQQPoly(QQPoly result, fmpq_poly_t f)
 {
+   // TODO
    result.coeffs.resize(fmpz_poly_length(f));   
 }
-
-// fromZZFlintPoly  (to: std::vector<gmp_ZZ>)
-// fromQQFlintPoly  (to: num = std::vector<gmp_ZZ>, den = gmp_ZZ)
 
 /**
 \ingroup rings
