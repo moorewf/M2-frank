@@ -11,8 +11,9 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
 #include <flint/flint.h>      // for ???
+#include <flint/fmpz.h>
+#include <flint/fmpz_poly.h>
 #include <flint/fmpq.h>       // for ???
-#include <flint/fmpq_vec.h>   // for ???
 #include <flint/fmpq_poly.h>  // for ???
 #include <flint/nf.h>         // for ???
 #include <flint/nf_elem.h>    // for ???
@@ -29,22 +30,60 @@ class RingElement;
 
 namespace M2 {
 
+// types for translation between Flint poly types and ring_elems.
+using ZZPolyStruct = std::vector<gmp_ZZ>;
+struct QQPolyStruct
+{
+   std::vector<gmp_ZZ> coeffs;
+   gmp_ZZ denom;
+};
+using ZZPoly = ZZPolyStruct&;
+using QQPoly = QQPolyStruct&;
+
 // Some helper functions to convert to/from arrays of gmp integers and flint's types
 
-void toZZFlintPoly(fmpz_poly_t result, std::vector<gmp_ZZ> num)
+fmpz_poly_struct toFlintZZPoly(ZZPoly f)
 {
-   fmpz_t flintCoeff;
-   fmpz_init(flintCoeff);
-   fmpz_poly_init2(result, num.size());
-   for (auto i = 0; i < num.size(); ++i)
+   // we assume that result has already been initialized
+   fmpz_poly_struct result;
+   fmpz_poly_init2(&result, f->size());
+
+   fmpz* resultCoeffs = fmpz_poly_get_coeff_ptr(&result);
+
+   for (auto i = 0; i < f->size(); ++i)
    {
-      fmpz_set_mpz(flintCoeff, num[i]);
-      fmpz_poly_set_coeff_fmpz(result, i, flintCoeff);
+      fmpz_set_mpz(&(resultCoeffs[i]), (*f)[i]);
    }
-   fmpz_clear(flintCoeff);
+   return result;
 }
 
-// toQQFlintPoly (like above but with a denominator)
+fmpq_poly_struct toFlintQQPoly(QQPoly f)
+{
+   // we assume that result has already been initialized
+   fmpq_poly_struct result;
+   fmpz_poly_init2(&result, f->coeffs.size());
+
+   fmpz* resultCoeffs = fmpq_poly_numref(result);
+   fmpz_t resultDen = fmpq_poly_denref(result);
+   
+   for (auto i = 0; i < f->coeffs.size(); ++i)
+   {
+      fmpz_set_mpz(&(resultCoeffs[i]), f->coeffs[i]);
+   }
+   fmpz_set_mpz(resultDen, f->denom);
+   return result;
+}
+
+void fromFlintZZPoly(ZZPoly result, fmpz_poly_t f)
+{
+   result.resize(fmpz_poly_length(f));
+}
+
+void fromFlintQQPoly(QQPoly result, fmpq_poly_t f)
+{
+   result.coeffs.resize(fmpz_poly_length(f));   
+}
+
 // fromZZFlintPoly  (to: std::vector<gmp_ZZ>)
 // fromQQFlintPoly  (to: num = std::vector<gmp_ZZ>, den = gmp_ZZ)
 
@@ -205,25 +244,30 @@ class ARingNumberField : public RingInterface
   void clear(ElementType& result) const { nf_elem_clear(&result, mContext); }
   void set_from_long(ElementType& result, long a) const
   {
-    fq_zech_set_ui(&result, a1, mContext);
+    // TODO
+    //fq_zech_set_ui(&result, a1, mContext);
   }
 
   void set_var(ElementType& result, int v) const
   {
-    if (v != 0) set_from_long(result, 1);
-    std::vector<long> poly = {0, 1};
-    fromSmallIntegerCoefficients(result, poly);
+    // TODO
+    //if (v != 0) set_from_long(result, 1);
+    //std::vector<long> poly = {0, 1};
+    //fromSmallIntegerCoefficients(result, poly);
     // printf("variable is %lu\n", result.value);
   }
 
   void set_from_mpz(ElementType& result, mpz_srcptr a) const
   {
-    int b = static_cast<int>(mpz_fdiv_ui(a, characteristic()));
-    set_from_long(result, b);
+    // TODO
+    //int b = static_cast<int>(mpz_fdiv_ui(a, characteristic()));
+    //set_from_long(result, b);
   }
 
   bool set_from_mpq(ElementType& result, mpq_srcptr a) const
   {
+    // TODO
+#if 0
     ElementType n, d;
     init(n);
     init(d);
@@ -231,27 +275,31 @@ class ARingNumberField : public RingInterface
     set_from_mpz(d, mpq_denref(a));
     if (is_zero(d)) return false;
     divide(result, n, d);
+#endif
     return true;
   }
 
   bool set_from_BigReal(ElementType& result, gmp_RR a) const { return false; }
   void negate(ElementType& result, const ElementType& a) const
   {
-    fq_zech_neg(&result, &a, mContext);
+    // TODO
+    //fq_zech_neg(&result, &a, mContext);
   }
 
   void invert(ElementType& result, const ElementType& a) const
   {
-    if (is_zero(a))
-      throw exc::division_by_zero_error();
-    else fq_zech_inv(&result, &a, mContext);
+    // TODO
+    //if (is_zero(a))
+    //  throw exc::division_by_zero_error();
+    //else fq_zech_inv(&result, &a, mContext);
   }
 
   void add(ElementType& result,
            const ElementType& a,
            const ElementType& b) const
   {
-    fq_zech_add(&result, &a, &b, mContext);
+    // TODO
+    // fq_zech_add(&result, &a, &b, mContext);
     // printf("zech add %lu + %lu = %lu\n", a.value, b.value, result.value);
   }
 
@@ -259,7 +307,8 @@ class ARingNumberField : public RingInterface
                 const ElementType& a,
                 const ElementType& b) const
   {
-    fq_zech_sub(&result, &a, &b, mContext);
+    // TODO
+    //fq_zech_sub(&result, &a, &b, mContext);
   }
 
   void subtract_multiple(ElementType& result,
