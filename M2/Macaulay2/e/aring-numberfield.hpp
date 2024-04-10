@@ -46,13 +46,14 @@ fmpz_poly_struct toFlintZZPoly(ZZPoly f)
 {
    // we assume that result has already been initialized
    fmpz_poly_struct result;
-   fmpz_poly_init2(&result, f->size());
+   fmpz_poly_init2(&result, f.size());
 
-   fmpz* resultCoeffs = fmpz_poly_get_coeff_ptr(&result);
+   //   fmpz* resultCoeffs = fmpz_poly_get_coeff_ptr(&result);
 
-   for (auto i = 0; i < f->size(); ++i)
+   for (auto i = 0; i < f.size(); ++i)
    {
-      fmpz_set_mpz(&(resultCoeffs[i]), (*f)[i]);
+     fmpz_set_mpz(fmpz_poly_get_coeff_ptr(&result, i), f[i]);
+     //      fmpz_set_mpz(&(resultCoeffs[i]), f[i]);
    }
    return result;
 }
@@ -61,29 +62,29 @@ fmpq_poly_struct toFlintQQPoly(QQPoly f)
 {
    // we assume that result has already been initialized
    fmpq_poly_struct result;
-   fmpz_poly_init2(&result, f->coeffs.size());
+   fmpz_poly_init2(&result, f.coeffs.size());
 
    fmpz* resultCoeffs = fmpq_poly_numref(result);
    fmpz_t resultDen = fmpq_poly_denref(result);
    
-   for (auto i = 0; i < f->coeffs.size(); ++i)
+   for (auto i = 0; i < f.coeffs.size(); ++i)
    {
-      fmpz_set_mpz(&(resultCoeffs[i]), f->coeffs[i]);
+      fmpz_set_mpz(&(resultCoeffs[i]), f.coeffs[i]);
    }
-   fmpz_set_mpz(resultDen, f->denom);
+   fmpz_set_mpz(resultDen, f.denom);
    return result;
 }
 
 void fromFlintZZPoly(ZZPoly result, fmpz_poly_t f)
 {
    // TODO
-   result.resize(fmpz_poly_length(f));
+   result.resize(fmpz_poly_length(&f));
 }
 
 void fromFlintQQPoly(QQPoly result, fmpq_poly_t f)
 {
    // TODO
-   result.coeffs.resize(fmpz_poly_length(f));   
+   result.coeffs.resize(fmpz_poly_length(&f));   
 }
 
 /**
@@ -157,8 +158,9 @@ class ARingNumberField : public RingInterface
   ~ARingNumberField();
 
   const nf_struct& flintContext() const { return mContext; }
+
   long characteristic() const { return 0; }
-  // long dimension() const { return mDimension; }
+  long dimension() const { return mDimension; }
   const PolynomialRing& originalRing() const { return mOriginalRing; }
   void getGenerator(ElementType& result_gen) const;
 
@@ -168,7 +170,7 @@ class ARingNumberField : public RingInterface
   nf_struct& mContext;
 
   const PolynomialRing& mOriginalRing;   // This is a quotient ring k[a]/f(a).
-  // long mDimension;
+  long mDimension;
   mutable flint_rand_t mRandomState;
 
   ////////////////////////////////
@@ -178,6 +180,7 @@ class ARingNumberField : public RingInterface
  public:
   unsigned int computeHashValue(const elem& a) const
   {
+    // TODO: use entire data for the has value
     return static_cast<unsigned int>(a.value);
   }
 
@@ -213,20 +216,20 @@ class ARingNumberField : public RingInterface
 
   void from_ring_elem_const_clear(ElementType a) const
   {
-    // nothing needed to do
+    // nothing needed to do or is that true? TODO
   }
 
   bool is_unit(const ElementType& f) const { return not is_zero(f); }
   bool is_zero(const ElementType& f) const
   {
-    return nf_elem_is_zero(&f, mContext);
+    return nf_elem_is_zero(&f, mContext) != 0;
   }
   bool is_equal(const ElementType& f, const ElementType& g) const
   {
-    return nf_elem_equal(&f, &g, mContext);
+    return nf_elem_equal(&f, &g, mContext) != 0;
   }
 
-  int compare_elems(const ElementType& f, const ElementType& g) const;
+  int compare_elems(const ElementType& f, const ElementType& g) const; // TODO
 
   void copy(ElementType& result, const ElementType& a) const
   {
@@ -281,33 +284,28 @@ class ARingNumberField : public RingInterface
   bool set_from_BigReal(ElementType& result, gmp_RR a) const { return false; }
   void negate(ElementType& result, const ElementType& a) const
   {
-    // TODO
-    //fq_zech_neg(&result, &a, mContext);
+    nf_elem_neg(&result, &a, mContext);
   }
 
   void invert(ElementType& result, const ElementType& a) const
   {
-    // TODO
-    //if (is_zero(a))
-    //  throw exc::division_by_zero_error();
-    //else fq_zech_inv(&result, &a, mContext);
+    if (is_zero(a))
+      throw exc::division_by_zero_error();
+    nf_elem_inv(&result, &a, mContext);
   }
 
   void add(ElementType& result,
            const ElementType& a,
            const ElementType& b) const
   {
-    // TODO
-    // fq_zech_add(&result, &a, &b, mContext);
-    // printf("zech add %lu + %lu = %lu\n", a.value, b.value, result.value);
+    nf_elem_add(&result, &a, &b, mContext);
   }
 
   void subtract(ElementType& result,
                 const ElementType& a,
                 const ElementType& b) const
   {
-    // TODO
-    //fq_zech_sub(&result, &a, &b, mContext);
+    nf_elem_sub(&result, &a, &b, mContext);
   }
 
   void subtract_multiple(ElementType& result,
@@ -325,70 +323,39 @@ class ARingNumberField : public RingInterface
             const ElementType& a,
             const ElementType& b) const
   {
-    fq_zech_mul(&result, &a, &b, mContext);
+    nf_elem_mul(&result, &a, &b, mContext);
   }
 
   void divide(ElementType& result,
               const ElementType& a,
               const ElementType& b) const
   {
-    // We need to handle the case when result is a, or b.
-    // This is why we use the temporary value 'c'.
-    ElementType c;
-    init(c);
-#if 0
-      printf("entering divide\n");
-      printf("  a = ");
-      fq_zech_print_pretty(&a, mContext);
-      printf("\n  b = ");
-      fq_zech_print_pretty(&b, mContext);
-#endif
-    invert(c, b);
-#if 0
-      printf("\n  1/b = ");
-      fq_zech_print_pretty(&c, mContext);
-#endif
-    mult(result, c, a);
-#if 0
-      printf("\n  a/b = ");
-      fq_zech_print_pretty(&result, mContext);
-      printf("\n");
-#endif
-    clear(c);
+    // compute a/b
+    if (is_zero(b))
+      throw exc::division_by_zero_error();
+    nf_elem_div(&result, &a, &b, mContext);
   }
 
   void power(ElementType& result, const ElementType& a, int n) const
   {
+    // TODO: 0^0 == 1?  This is what flint does
     if (n < 0)
       {
         invert(result, a);
-        fq_zech_pow_ui(&result, &result, -n, mContext);
+        nf_elem_pow(&result, &result, -n, mContext);
       }
     else
-      fq_zech_pow_ui(&result, &a, n, mContext);
+      nf_elem_pow(&result, &a, n, mContext);
   }
 
   void power_mpz(ElementType& result, const ElementType& a, mpz_srcptr n) const
   {
-    if (mpz_sgn(n) < 0)
-      invert(result, a);
-    else
-      copy(result, a);
-
-    mpz_t abs_n;
-    mpz_init(abs_n);
-    mpz_abs(abs_n, n);
-    
-    fmpz_t fn;
-    fmpz_init_set_readonly(fn, abs_n);
-    fq_zech_pow(&result, &result, fn, mContext);
-    fmpz_clear_readonly(fn);
-    mpz_clear(abs_n);
+    // TODO: first see if n fits into an int, then call above power function.
   }
 
   void swap(ElementType& a, ElementType& b) const
   {
-    fq_zech_swap(&a, &b, mContext);
+    nf_elem_swap(&a, &b, mContext);
   }
 
   void elem_text_out(buffer& o,
@@ -405,8 +372,8 @@ class ARingNumberField : public RingInterface
   // if possible, x is set to 1.
   // no need to consider the case a==0 or b==0.
   {
-    assert(not is_zero(a));
-    assert(not is_zero(b));
+    assert(not is_zero(a)); // TODO: change to throw.
+    assert(not is_zero(b)); // TODO: change to throw.
     set_from_long(x, 1);
     divide(y, a, b);
     negate(y, y);
@@ -414,25 +381,15 @@ class ARingNumberField : public RingInterface
 
   void random(ElementType& result) const
   {
-    std::vector<long> poly;
-    for (int i = 0; i < dimension(); ++i)
-      poly.push_back(rawRandomULong(characteristic()));
-    fromSmallIntegerCoefficients(result, poly);
-    //    fq_zech_randtest(&result, mRandomState, mContext);
+    mp_bitcnt_t bitcount = 5; // TODO: this would be a good parameter to have
+    nf_elem_randtest(&result, mRandomState, bitcount, mContext)
   }
 
-  void fromSmallIntegerCoefficients(ElementType& result,
-                                    const std::vector<long>& poly) const;
+  bool promote(const Ring* Rf, const ring_elem f, ElementType& result) const; // TODO
 
-  void getSmallIntegerCoefficients(const ElementType& a,
-                                   std::vector<long>& poly) const;
+  void lift_to_original_ring(ring_elem& result, const ElementType& f) const; // TODO
 
-  bool promote(const Ring* Rf, const ring_elem f, ElementType& result) const;
-
-  void lift_to_original_ring(ring_elem& result, const ElementType& f) const;
-  // GF specific routine, used in getRepresentation
-
-  bool lift(const Ring* Rg, const ElementType& f, ring_elem& result) const;
+  bool lift(const Ring* Rg, const ElementType& f, ring_elem& result) const; // TODO
 
   // map : this --> target(map)
   //       primelem --> map->elem(first_var)
@@ -440,9 +397,9 @@ class ARingNumberField : public RingInterface
   void eval(const RingMap* map,
             const ElementType& f,
             int first_var,
-            ring_elem& result) const;
-};
-};
+            ring_elem& result) const; // TODO
+}; // end of ARingNumberField definition
+}; // end namespace M2
 
 #endif
 // Local Variables:
