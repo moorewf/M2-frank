@@ -62,10 +62,10 @@ fmpq_poly_struct toFlintQQPoly(QQPoly f)
 {
    // we assume that result has already been initialized
    fmpq_poly_struct result;
-   fmpz_poly_init2(&result, f.coeffs.size());
+   fmpq_poly_init2(&result, f.coeffs.size());
 
-   fmpz* resultCoeffs = fmpq_poly_numref(result);
-   fmpz_t resultDen = fmpq_poly_denref(result);
+   fmpz* resultCoeffs = fmpq_poly_numref(&result);
+   fmpz* resultDen = fmpq_poly_denref(&result);
    
    for (auto i = 0; i < f.coeffs.size(); ++i)
    {
@@ -78,13 +78,13 @@ fmpq_poly_struct toFlintQQPoly(QQPoly f)
 void fromFlintZZPoly(ZZPoly result, fmpz_poly_t f)
 {
    // TODO
-   result.resize(fmpz_poly_length(&f));
+   result.resize(fmpz_poly_length(f));
 }
 
 void fromFlintQQPoly(QQPoly result, fmpq_poly_t f)
 {
    // TODO
-   result.coeffs.resize(fmpz_poly_length(&f));   
+   result.coeffs.resize(fmpq_poly_length(f));   
 }
 
 /**
@@ -97,7 +97,7 @@ class ARingNumberField : public RingInterface
   static const RingID ringID = ring_NumberField;
   typedef nf_elem_struct ElementType;
   typedef ElementType elem;
-  typedef std::vector<elem> ElementContainerType;
+  typedef std::vector<ElementType> ElementContainerType;
   using ReadOnlyElement = ReadOnlyElementTempl<ARingNumberField>;
 
   /**
@@ -116,11 +116,11 @@ class ARingNumberField : public RingInterface
       nf_elem_init(&mValue, mContext);
       nf_elem_set(&mValue, &other.mValue, mContext);
     }
-    explicit Element(const ARingNumberField& R) : mContext(R.mContext)
+    explicit Element(const ARingNumberField& R) : mContext(&R.mContext)
     {
       nf_elem_init(&mValue, mContext);
     }
-    Element(const ARingNumberField& R, const ElementType& value) : mContext(R.mContext)
+    Element(const ARingNumberField& R, const ElementType& value) : mContext(&R.mContext)
     {
       R.init_set(mValue, value);
     }
@@ -132,13 +132,13 @@ class ARingNumberField : public RingInterface
 
   class ElementArray
   {
-    const nf_struct& mContext;
+    const nf_struct* mContext;
     const size_t mSize;
     std::unique_ptr<ElementType[]> mData;
 
    public:
     ElementArray(const ARingNumberField& R, size_t size)
-        : mContext(R.mContext), mSize(size), mData(new ElementType[size])
+        : mContext(&R.mContext), mSize(size), mData(new ElementType[size])
     {
       for (size_t i = 0; i < mSize; i++) nf_elem_init(&mData[i], mContext);
     }
@@ -167,7 +167,7 @@ class ARingNumberField : public RingInterface
   void text_out(buffer& o) const;
 
  private:
-  nf_struct& mContext;
+  nf_struct mContext;
 
   const PolynomialRing& mOriginalRing;   // This is a quotient ring k[a]/f(a).
   long mDimension;
@@ -181,7 +181,7 @@ class ARingNumberField : public RingInterface
   unsigned int computeHashValue(const elem& a) const
   {
     // TODO: use entire data for the has value
-    return static_cast<unsigned int>(a.value);
+    return 0;
   }
 
   void to_ring_elem(ring_elem& result, const ElementType& a) const
@@ -211,7 +211,7 @@ class ARingNumberField : public RingInterface
   ElementType from_ring_elem_const(const ring_elem& a) const
   {
     // TODO
-    return *(a.get_number_field_elem());
+    return *(reinterpret_cast<const ElementType*>(a.get_number_field_elem()));
   }
 
   void from_ring_elem_const_clear(ElementType a) const
@@ -222,28 +222,28 @@ class ARingNumberField : public RingInterface
   bool is_unit(const ElementType& f) const { return not is_zero(f); }
   bool is_zero(const ElementType& f) const
   {
-    return nf_elem_is_zero(&f, mContext) != 0;
+    return nf_elem_is_zero(&f, &mContext) != 0;
   }
   bool is_equal(const ElementType& f, const ElementType& g) const
   {
-    return nf_elem_equal(&f, &g, mContext) != 0;
+    return nf_elem_equal(&f, &g, &mContext) != 0;
   }
 
   int compare_elems(const ElementType& f, const ElementType& g) const; // TODO
 
   void copy(ElementType& result, const ElementType& a) const
   {
-    nf_elem_set(&result, &a, mContext);
+    nf_elem_set(&result, &a, &mContext);
   }
-  void init(ElementType& result) const { nf_elem_init(&result, mContext); }
+  void init(ElementType& result) const { nf_elem_init(&result, &mContext); }
   void init_set(ElementType& result, const ElementType& a) const
   {
     init(result);
     copy(result, a);
   }
   void set(ElementType& result, const ElementType& a) const { copy(result, a); }
-  void set_zero(ElementType& result) const { nf_elem_zero(&result, mContext); }
-  void clear(ElementType& result) const { nf_elem_clear(&result, mContext); }
+  void set_zero(ElementType& result) const { nf_elem_zero(&result, &mContext); }
+  void clear(ElementType& result) const { nf_elem_clear(&result, &mContext); }
   void set_from_long(ElementType& result, long a) const
   {
     // TODO
@@ -284,28 +284,28 @@ class ARingNumberField : public RingInterface
   bool set_from_BigReal(ElementType& result, gmp_RR a) const { return false; }
   void negate(ElementType& result, const ElementType& a) const
   {
-    nf_elem_neg(&result, &a, mContext);
+    nf_elem_neg(&result, &a, &mContext);
   }
 
   void invert(ElementType& result, const ElementType& a) const
   {
     if (is_zero(a))
       throw exc::division_by_zero_error();
-    nf_elem_inv(&result, &a, mContext);
+    nf_elem_inv(&result, &a, &mContext);
   }
 
   void add(ElementType& result,
            const ElementType& a,
            const ElementType& b) const
   {
-    nf_elem_add(&result, &a, &b, mContext);
+    nf_elem_add(&result, &a, &b, &mContext);
   }
 
   void subtract(ElementType& result,
                 const ElementType& a,
                 const ElementType& b) const
   {
-    nf_elem_sub(&result, &a, &b, mContext);
+    nf_elem_sub(&result, &a, &b, &mContext);
   }
 
   void subtract_multiple(ElementType& result,
@@ -323,7 +323,7 @@ class ARingNumberField : public RingInterface
             const ElementType& a,
             const ElementType& b) const
   {
-    nf_elem_mul(&result, &a, &b, mContext);
+    nf_elem_mul(&result, &a, &b, &mContext);
   }
 
   void divide(ElementType& result,
@@ -333,7 +333,7 @@ class ARingNumberField : public RingInterface
     // compute a/b
     if (is_zero(b))
       throw exc::division_by_zero_error();
-    nf_elem_div(&result, &a, &b, mContext);
+    nf_elem_div(&result, &a, &b, &mContext);
   }
 
   void power(ElementType& result, const ElementType& a, int n) const
@@ -342,10 +342,10 @@ class ARingNumberField : public RingInterface
     if (n < 0)
       {
         invert(result, a);
-        nf_elem_pow(&result, &result, -n, mContext);
+        nf_elem_pow(&result, &result, -n, &mContext);
       }
     else
-      nf_elem_pow(&result, &a, n, mContext);
+      nf_elem_pow(&result, &a, n, &mContext);
   }
 
   void power_mpz(ElementType& result, const ElementType& a, mpz_srcptr n) const
@@ -355,7 +355,7 @@ class ARingNumberField : public RingInterface
 
   void swap(ElementType& a, ElementType& b) const
   {
-    nf_elem_swap(&a, &b, mContext);
+    nf_elem_swap(&a, &b, &mContext);
   }
 
   void elem_text_out(buffer& o,
@@ -382,7 +382,7 @@ class ARingNumberField : public RingInterface
   void random(ElementType& result) const
   {
     mp_bitcnt_t bitcount = 5; // TODO: this would be a good parameter to have
-    nf_elem_randtest(&result, mRandomState, bitcount, mContext)
+    nf_elem_randtest(&result, mRandomState, bitcount, &mContext);
   }
 
   bool promote(const Ring* Rf, const ring_elem f, ElementType& result) const; // TODO

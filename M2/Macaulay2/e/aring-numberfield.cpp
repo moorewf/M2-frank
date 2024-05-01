@@ -12,8 +12,8 @@ namespace M2 {
     // Which of these is best?
     : mContext() // TODO
     , mOriginalRing(R)
-    , mRandomState() // TODO
-    , mPolynomial(a) // a standard vector or element of R?
+      //    , mRandomState() // TODO
+      //    , mPolynomial(a) // a standard vector or element of R?
     , mDimension() // TODO
   {
     // TODO
@@ -27,9 +27,9 @@ namespace M2 {
 
   void ARingNumberField::elem_text_out(buffer& o,
                      const ElementType& a,
-                     bool p_one = true,
-                     bool p_plus = false,
-                     bool p_parens = false) const
+                     bool p_one,
+                     bool p_plus,
+                     bool p_parens) const
   {
     // TODO
   }

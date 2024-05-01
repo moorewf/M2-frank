@@ -435,6 +435,7 @@ if(BUILD_TESTING)
     unit-tests/PolyRingTest.cpp
 
     unit-tests/ARingTest.hpp
+    unit-tests/ARingNumberFieldTest.cpp
     unit-tests/ARingZZTest.cpp
     unit-tests/ARingZZpTest.cpp
 #    unit-tests/ARingGFTest.cpp # FIXME: see aring-gf-givaro.cpp:199
