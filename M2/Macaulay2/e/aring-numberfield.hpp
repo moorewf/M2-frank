@@ -34,7 +34,7 @@ namespace M2 {
 using ZZPolyStruct = std::vector<gmp_ZZ>;
 struct QQPolyStruct
 {
-   std::vector<gmp_ZZ> coeffs;
+   ZZPolyStruct coeffs;
    gmp_ZZ denom;
 };
 using ZZPoly = ZZPolyStruct&;
@@ -42,50 +42,11 @@ using QQPoly = QQPolyStruct&;
 
 // Some helper functions to convert to/from arrays of gmp integers and flint's types
 
-fmpz_poly_struct toFlintZZPoly(ZZPoly f)
-{
-   // we assume that result has already been initialized
-   fmpz_poly_struct result;
-   fmpz_poly_init2(&result, f.size());
-
-   //   fmpz* resultCoeffs = fmpz_poly_get_coeff_ptr(&result);
-
-   for (auto i = 0; i < f.size(); ++i)
-   {
-     fmpz_set_mpz(fmpz_poly_get_coeff_ptr(&result, i), f[i]);
-     //      fmpz_set_mpz(&(resultCoeffs[i]), f[i]);
-   }
-   return result;
-}
-
-fmpq_poly_struct toFlintQQPoly(QQPoly f)
-{
-   // we assume that result has already been initialized
-   fmpq_poly_struct result;
-   fmpq_poly_init2(&result, f.coeffs.size());
-
-   fmpz* resultCoeffs = fmpq_poly_numref(&result);
-   fmpz* resultDen = fmpq_poly_denref(&result);
-   
-   for (auto i = 0; i < f.coeffs.size(); ++i)
-   {
-      fmpz_set_mpz(&(resultCoeffs[i]), f.coeffs[i]);
-   }
-   fmpz_set_mpz(resultDen, f.denom);
-   return result;
-}
-
-void fromFlintZZPoly(ZZPoly result, fmpz_poly_t f)
-{
-   // TODO
-   result.resize(fmpz_poly_length(f));
-}
-
-void fromFlintQQPoly(QQPoly result, fmpq_poly_t f)
-{
-   // TODO
-   result.coeffs.resize(fmpq_poly_length(f));   
-}
+void toFlintZZPoly(fmpz_poly_struct* result, const std::vector<long>& coeffs);
+fmpz_poly_struct toFlintZZPoly(ZZPoly f);
+fmpq_poly_struct toFlintQQPoly(QQPoly f);
+void fromFlintZZPoly(ZZPoly result, fmpz_poly_t f);
+void fromFlintQQPoly(QQPoly result, fmpq_poly_t f);
 
 /**
 \ingroup rings
@@ -154,6 +115,7 @@ class ARingNumberField : public RingInterface
 
   // TODO: Do we really want to take a ring_elem as input here?
   ARingNumberField(const PolynomialRing& R, const ring_elem a);
+  ARingNumberField(const std::vector<long>& coeffs);
 
   ~ARingNumberField();
 
@@ -161,15 +123,16 @@ class ARingNumberField : public RingInterface
 
   long characteristic() const { return 0; }
   long dimension() const { return mDimension; }
-  const PolynomialRing& originalRing() const { return mOriginalRing; }
+  // const PolynomialRing& originalRing() const { return mOriginalRing; }
   void getGenerator(ElementType& result_gen) const;
 
   void text_out(buffer& o) const;
 
  private:
   nf_struct mContext;
+  fmpq_poly_struct mFlintPolynomial;  // this is the defining polynomial of the extension
 
-  const PolynomialRing& mOriginalRing;   // This is a quotient ring k[a]/f(a).
+  //const PolynomialRing& mOriginalRing;   // This is a quotient ring k[a]/f(a).
   long mDimension;
   mutable flint_rand_t mRandomState;
 
