@@ -421,7 +421,7 @@ sliceModule = (M, rows) -> (
     if isFreeModule M    then (ring M)^((-degrees M)_rows) else
     if not M.?relations  then image    submatrixFree(generators M, , rows) else
     if not M.?generators then cokernel submatrixFree(relations  M, rows, ) else
-    subquotient(submatrixFree(generators M, , rows), submatrixFree(relations M, rows, )))
+    subquotient(submatrixFree(generators M, , rows), relations M))
 
 submatrix  = method(TypicalValue => Matrix)
 submatrix' = method(TypicalValue => Matrix)
@@ -634,12 +634,13 @@ inducedMap(Module,Module,Matrix) := Matrix => opts -> (N',M',f) -> (
      N := target f;
      M := source f;
      if ring N' =!= ring M' or ring N' =!= ring f then error "inducedMap: expected modules and map over the same ring";
-     if isFreeModule N and isFreeModule M and (N =!= ambient N' and rank N === rank ambient N' or M =!= ambient M' and rank M === rank ambient M')
+    if isFreeModule N and isFreeModule M and (
+	N =!= ambient N' and rank N === rank ambient N' or
+	M =!= ambient M' and rank M === rank ambient M')
      then f = map(N = ambient N', M = ambient M', f)
      else (
-     	  if ambient N' =!= ambient N then error "inducedMap: expected new target and target of map provided to be subquotients of same free module";
-     	  if ambient M' =!= ambient M then error "inducedMap: expected new source and source of map provided to be subquotients of same free module";
-	  );
+	if ambient N' =!= ambient N then error "inducedMap: expected new target and target of map provided to be subquotients of same free module";
+	if ambient M' =!= ambient M then error "inducedMap: expected new source and source of map provided to be subquotients of same free module");
      c := runHooks((inducedMap, Module, Module, Matrix), (opts, N', M', f));
      (f', g, gbN', gbM) := if c =!= null then c else error "inducedMap: no method implemented for this type of input";
      if opts.Verify then (
@@ -665,8 +666,7 @@ addHook((inducedMap, Module, Module, Matrix), Strategy => Default, (opts, N', M'
      (f', g, gbN', gbM)))
 
 inducedMap(Module,Module) := Matrix => o -> (M,N) -> (
-     if ambient M != ambient N 
-     then error "'inducedMap' expected modules with same ambient free module";
+    if ambient M =!= ambient N then error "inducedMap: expected modules with same ambient free module";
      inducedMap(M,N,id_(ambient N),o))
 
 -- TODO: deprecate this in favor of isWellDefined
@@ -727,8 +727,9 @@ ambient Matrix := Matrix => f -> (
 
 degrees Ring := R -> degree \ generators R
 
-leadComponent Matrix := m -> apply(entries transpose m, col -> last positions (col, x -> x != 0))
-leadComponent Vector := m -> first apply(entries transpose m#0, col -> last positions (col, x -> x != 0))
+leadComponent = method()
+leadComponent Matrix := List => m -> nonnull for c to numColumns m - 1 list position(numRows m, r -> m_(r,c) != 0, Reverse => true)
+leadComponent Vector := ZZ   => v -> try first leadComponent matrix v else null
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

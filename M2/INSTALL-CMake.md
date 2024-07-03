@@ -27,7 +27,7 @@ There are 10 libraries that must be found on the system.
 - On Fedora/CentOS, install `openblas-devel gmp-devel libxml2-devel readline-devel gdbm-devel boost-devel libomp-devel tbb-devel libffi-devel`.
 - On Mac OS X, using Homebrew, install `gmp libxml2 readline gdbm boost libomp tbb libffi`.
 
-**TIP**: x86_64 binary packages for all dependencies on Mac OS X 10.15+ and Linux distributions are available through the [Macaulay2 tap](https://github.com/Macaulay2/homebrew-tap/) for Homebrew. To download the dependencies this way run:
+**TIP**: x86_64 and arm64 binary packages for all dependencies on Mac OS X 12+ and Linux distributions are available through the [Macaulay2 tap](https://github.com/Macaulay2/homebrew-tap/) for Homebrew. To download the dependencies this way run:
 ```
 brew tap Macaulay2/tap
 brew install --only-dependencies macaulay2/tap/M2
@@ -71,7 +71,7 @@ ninja build-libraries
 ```
 Note that this target **must** be built separately, before proceeding to `M2-binary`.
 
-To enforce building certain libraries, for instance BDWGC and MPIR, run `cmake -DBUILD_LIBRARIES="BDWGC;MPIR"`, or `cmake -DBUILD_LIBRARIES=ALL` to build everything.
+To enforce building certain libraries, for instance BDWGC and FLINT, run `cmake -DBUILD_LIBRARIES="BDWGC;FLINT"`, or `cmake -DBUILD_LIBRARIES=ALL` to build everything.
 
 *Tip:* if you have already built the libraries in another build directory, use `-DM2_HOST_PREFIX=[usr-host path]` to tell CMake where to look for the libraries and programs. Note that most options can be changed after the initial call to CMake with a subsequent call:
 ```
@@ -147,7 +147,6 @@ For a complete list, along with descriptions, try `cmake -LAH .` or see `cmake/c
 - `LINTING:BOOL=OFF`: enable linting C++ sources (see `cmake/prechecks.cmake`)
 - `MEMDEBUG:BOOL=OFF`: enable memory allocation debugging
 - `PROFILING:BOOL=OFF`: enable profiling build flags
-- `USING_MPIR:BOOL=OFF`: use MPIR instead of GMP
 - `WITH_OMP:BOOL=ON`: link with the OpenMP library
 - `WITH_TBB:BOOL=ON`: link with the TBB library
 - `WITH_FFI:BOOL=ON`: link with the FFI library
@@ -215,9 +214,10 @@ Macaulay2 uses several external libraries and programs, which can be built using
   - `build-memtailor`: [Memtailor] library for special purpose memory allocators
   - `build-mpfr`:	[MPFR] GNU Multiple Precision Floating Point library
   - `build-mpfi`:	[MPFI] a multiple precision interval arithmetic library based on MPFR
-  - `build-mpir`:	[MPIR] Multiple Precision Integers & Rationals library (optional replacement for GMP)
   - `build-mpsolve`: [MPSolve] library for solving multiprecision polynomials
   - `build-msolve`:	[MSolve] library for solving multivariate polynomials
+  - `build-nauty`:	[nauty] library for computing automorphism groups of graphs and digraphs
+  - `build-normaliz`: [Normaliz] library for computations in affine monoids, lattice polytopes, and rational cones
   - `build-ntl`:	[NTL] library for doing number theory
 
 [Boehm-Demers-Weiser]: https://www.hboehm.info/gc/
@@ -235,7 +235,6 @@ Macaulay2 uses several external libraries and programs, which can be built using
 [Memtailor]: https://github.com/broune/memtailor
 [MPFR]: https://www.mpfr.org/
 [MPFI]: http://perso.ens-lyon.fr/nathalie.revol/software.html
-[MPIR]: http://mpir.org/
 [MPSolve]: https://github.com/robol/MPSolve
 [MSolve]: https://msolve.lip6.fr/
 [NTL]: https://www.shoup.net/ntl/
@@ -246,8 +245,6 @@ Macaulay2 uses several external libraries and programs, which can be built using
   - `build-csdp`:	[CSDP] software for solving semidefinite programming problems
   - `build-gfan`:	[Gfan] software for computing Grobner fans and tropical varieties
   - `build-lrslib`:	[lrs] software for vertex enumeration/convex hull problems
-  - `build-nauty`:	[nauty] software for computing automorphism groups of graphs and digraphs
-  - `build-normaliz`: [Normaliz] software for computations in affine monoids, lattice polytopes, and rational cones
   - `build-topcom`:	[TOPCOM] software for computing triangulations of point configurations and oriented matroids
 
 Additionally, build targets are available for a few programs which are not built and distributed by default due to time or licensing constraints:
@@ -283,7 +280,6 @@ The main targets for building Macaulay2 are:
 - `M2-core`: generate and copy the Core package
 - `M2-emacs`: generate the M2-mode package for Emacs
 - `M2-prism`: generate prism.js (javascript syntax highlighter)
-- `M2-highlightjs`: generate highlight.js (javascript syntax highlighter)
 
 In addition, the following targets are available:
 - `scc1`: build the Safe C Compiler

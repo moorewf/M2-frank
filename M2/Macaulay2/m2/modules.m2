@@ -246,7 +246,7 @@ describe Module := M -> Describe (
      else if M.?generators
      then (expression image) (describe M.generators)
      else new Superscript from {unhold expression ring M, if all(degrees M, deg -> all(deg, zero)) then expression numgens M
-	 else expression(-degrees M)}
+	 else expression runLengthEncode(-degrees M)}
      )
 toExternalString Module := M -> toString describe M
 
@@ -356,7 +356,7 @@ schreyerOrder Module := Matrix => (F) -> (
      tar := new Module from (ring F, rawTarget m);
      map(tar,src,m))
 
-schreyerOrder Matrix := Matrix => (m) -> map(target m, new Module from (ring m, rawSchreyerSource raw m), m)
+schreyerOrder Matrix := Matrix => (m) -> map(ring m, schreyerOrder raw m)
 schreyerOrder RawMatrix := RawMatrix => (m) -> rawMatrixRemake2(rawTarget m, rawSchreyerSource m, rawMultiDegree m, m, 0)
 
 possiblyLift := x -> if denominator x === 1 then numerator x else x -- x is in QQ
