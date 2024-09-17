@@ -35,8 +35,14 @@ public:
   {
     mArena->freeTopArray(begin, end);
     std::pair<T*, T*> result = mArena->allocArrayNoCon<T>(newtop - begin);
-    if (result.first != begin) std::cout << "ooops: location changed" << std::endl;
+    // if (result.first != begin) std::cout << "ooops: location changed" << std::endl;
     return result;
+  }
+
+  template<typename T>
+  std::pair<T*, T*> removeLastAllocate(T* begin, T* end)
+  {
+    return shrinkLastAllocate(begin,end,begin);
   }
 
   template<typename T>

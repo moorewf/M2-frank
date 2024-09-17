@@ -123,6 +123,8 @@ class F4GB : public our_new_delete
   coefficient_matrix *mat;
   MonomialHashTable<MonomialInfo> mMonomialHashTable;
   F4MemoryBlock<monomial_word> mMonomialMemoryBlock;
+  MemoryBlock mMonomialMemoryBlock2;
+  
   monomial_word *next_monom;  // valid while creating the matrix
   
   MemoryBlock mComponentSpace; // stop-gap for use with VectorArithmetic and Mem. (TODO: what does this comment mean?)

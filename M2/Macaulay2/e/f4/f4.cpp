@@ -61,7 +61,7 @@ F4GB::F4GB(const VectorArithmetic* VA,
       mat(nullptr),
       mMonomialHashTable(M0, 17),
       mMonomialMemoryBlock(),
-      next_monom(),
+      next_monom(nullptr),
       clock_sort_columns(0),
       clock_gauss(0),
       mGaussTime(0),
@@ -159,14 +159,25 @@ int F4GB::mult_monomials(packed_monomial m, packed_monomial n)
   // If it is there, return its column
   // If not, increment our memory block, and insert a new column.
   packed_monomial new_m;
-  mMonomialInfo->unchecked_mult(m, n, next_monom);
-  if (mMonomialHashTable.find_or_insert(next_monom, new_m))
-    return static_cast<int>(
+  // TODO: Clean this up once it works
+  // memory block allocate
+  auto newMonomPair = mMonomialMemoryBlock2.allocateArray<monomial_word>(1 + mMonomialInfo->max_monomial_size());
+  //mMonomialInfo->unchecked_mult(m, n, next_monom);
+  mMonomialInfo->unchecked_mult(m, n, newMonomPair.first + 1);
+  if (mMonomialHashTable.find_or_insert(newMonomPair.first + 1, new_m))
+    {
+      mMonomialMemoryBlock2.removeLastAllocate(newMonomPair.first, newMonomPair.second);
+      return static_cast<int>(
         new_m[-1]);  // monom exists, don't save monomial space
-  m = next_monom;
-  mMonomialMemoryBlock.intern(1 + mMonomialInfo->monomial_size(m));
-  next_monom = mMonomialMemoryBlock.reserve(1 + mMonomialInfo->max_monomial_size());
-  next_monom++;
+    }
+  auto newEnd = newMonomPair.first + 1 + mMonomialInfo->monomial_size(newMonomPair.first + 1);
+  mMonomialMemoryBlock2.shrinkLastAllocate(newMonomPair.first,
+                                           newMonomPair.second,
+                                           newEnd);
+  m = newMonomPair.first + 1;
+  //mMonomialMemoryBlock.intern(1 + mMonomialInfo->monomial_size(m));
+  //next_monom = mMonomialMemoryBlock.reserve(1 + mMonomialInfo->max_monomial_size());
+  //next_monom++;
   return new_column(m);
 }
 
@@ -184,10 +195,26 @@ void F4GB::load_gen(int which)
 
   // TODO: this iterator requires knowledge about memory layout of monomials
   monomial_word *w = g.monoms;
+  packed_monomial new_m;
   for (int i = 0; i < g.len; i++)
     {
-      mMonomialInfo->copy(w, next_monom);
-      r.comps[i] = find_or_append_column(next_monom);
+      auto newMonomPair = mMonomialMemoryBlock2.allocateArray<monomial_word>(1 + mMonomialInfo->max_monomial_size());
+      mMonomialInfo->copy(w, newMonomPair.first + 1);
+
+      if (mMonomialHashTable.find_or_insert(newMonomPair.first + 1, new_m))
+      {
+        mMonomialMemoryBlock2.removeLastAllocate(newMonomPair.first, newMonomPair.second);
+        //return static_cast<int>(new_m[-1]);  // monom exists, don't save monomial space
+        r.comps[i] = static_cast<int>(new_m[-1]);
+      }
+      else
+      {
+        auto newEnd = newMonomPair.first + 1 + mMonomialInfo->monomial_size(newMonomPair.first);
+        mMonomialMemoryBlock2.shrinkLastAllocate(newMonomPair.first,
+                                                 newMonomPair.second,
+                                                 newEnd);
+        r.comps[i] = new_column(newMonomPair.first + 1);
+      }
       w += mMonomialInfo->monomial_size(w);
     }
 
@@ -237,8 +264,8 @@ void F4GB::process_column(int c)
       next_monom = mMonomialMemoryBlock.reserve(1 + mMonomialInfo->max_monomial_size());
       next_monom++;
       // M->set_component(which, n);
-      ce.head = INTSIZE(mat->rows);
       load_row(n, which);
+      ce.head = INTSIZE(mat->rows);
     }
   else
     ce.head = -1;
